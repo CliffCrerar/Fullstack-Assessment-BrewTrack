@@ -1,0 +1,26 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  db-bt:
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    # command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD='s3cret-R0ot-password'
+      - MYSQL_DATABASE=BrewTrack
+      - MYSQL_USER=BrewTrack
+      - MYSQL_PASSWORD='BrewTr@ck-s3CreT-passw0rd'
+    volumes:
+      - $USERPROFILE/brewtrack-data/mysql:/var/lib/mysql
+    ports: 
+      - 3306:3306
+
+  redis-bt:
+    image: redis:7.0-alpine
+    ports: 
+      - 6379:6379
+    volumes:
+      - $USERPROFILE/brewtrack-data/redis-data:/data
