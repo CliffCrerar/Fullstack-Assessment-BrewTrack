@@ -22,7 +22,12 @@ namespace BrewTrack.Infra
         public async Task<object> GetData()
         {
             var data = await AppHttpClient.GetAsync(_apiUrl);
-            var jsonData = JsonSerializer.Deserialize<BrewPubs>(data);
+            var jsonData = JsonSerializer.Deserialize<BrewPubs>(data) ?? new BrewPubs();
+            Ensure.ArgumentNotNull(jsonData, nameof(jsonData));
+            if(jsonData != null)
+            {
+                throw new NullReferenceException("Data returned from ");
+            }
             return Task.FromResult<IBrewPubApi>(jsonData);
         }
     }
