@@ -9,8 +9,7 @@ services:
         volumes:
           - 'mysql_data:/bitnami/mysql/data'
         environment:
-          # ALLOW_EMPTY_PASSWORD is recommended only for development.
-          - MYSQL_ROOT_PASSWORD=Pass-1234
+          # ALLOW_EMPTY_PASSWORD is recommended only for development
           - ALLOW_EMPTY_PASSWORD=yes
         healthcheck:
               test: ['CMD', '/opt/bitnami/scripts/mysql/healthcheck.sh']

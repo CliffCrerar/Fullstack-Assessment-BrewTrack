@@ -7,7 +7,7 @@ This is a mock assesment project that provides a single source of information ab
 ## Stack
 
 1. React Front End
-2. .Net backend
+2. .NET backend
 3. MySQL Database
 4. Redis
 
@@ -18,7 +18,8 @@ This is a mock assesment project that provides a single source of information ab
 In order to run this project an environment will require the following as prereqs:
  
 1. Nodejs v18.16.0 or later
-2. .Net sdk 7.0.203
+2. .NET sdk 7.0.203
+3. .NET Ef Cli
 
 For the app to run locally container apps were used for MySQL and Redis.
 
@@ -36,14 +37,24 @@ docker compose -d up
 To configure the application with its required infrastructure please create a `appsettings.Development.json` file and append these values to it.
 
 ```
-  "WeatherApiKey": "7f4f8c7c-fe1c-11ed-a26f-0242ac130002-7f4f8ce0-fe1c-11ed-a26f-0242ac130002",
+  "WeatherApiKey": "<weather api key>",
   "ConnectionStrings": {
-    "MySql": "Server=localhost;Database=BrewTrack;Uid=BrewTrack;Pwd=<secret password>;Port=3306",
-    "Redis": ""
+    "MySql": "Server=localhost;Port=3306;User ID=root;Database=BrewTrack",
+    "Redis": "<redis connection string>"
   }
  ```
 
-## Architecture
+> Note: When running the provided containers as support infrastructure the `ConnectionStrings` section of the config can be used verbatim. WeatherApiKey api key is still required.
+
+## Data Migrations
+
+Finally migrate the database by running `dotnet ef database update` if you have the `dotnet-ef cli` installed.
+
+## Run the app
+
+Run the application while in the project root directory `dotnet run`. 
+
+# Architecture
 
 ### ARCHITECTURAL PATTERN
 
