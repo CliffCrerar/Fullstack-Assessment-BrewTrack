@@ -16,7 +16,7 @@ public class AppHttpClient
         {
             Console.WriteLine("\nException Caught!");
             Console.WriteLine("Message :{0} ", e.Message);
-            return e.Message;
+            throw;
         }
     }
 }
