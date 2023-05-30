@@ -1,16 +1,26 @@
 using BrewTrack.Data;
 using BrewTrack.Services;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 // using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
+var mySqlConnectionString = configuration.GetConnectionString("MySql");
+var redisConnectionString = configuration.GetConnectionString("Redis");
+
 // Add services to the container.
 
 
 services.AddControllersWithViews();
-services.AddDbContext<BrewTrackDbContext>(options => options.UseMySQL(configuration.GetConnectionString("MySql")));
+services.AddDbContext<BrewTrackDbContext>(options => options.UseMySQL(mySqlConnectionString));
+//Configure other services up here
+
+services.AddSingleton<IConnectionMultiplexer>(options =>
+{
+    return ConnectionMultiplexer.Connect(redisConnectionString);
+});
 services.AddBrewTrackService(configuration);
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
