@@ -2,8 +2,7 @@
 const headers = new Headers();
 
 export async function getFromApi(apiPath) {
-    const res = await fetch(apiPath);
-    return await res.json();
+    return await fetch(apiPath);
 }
 
 export async function postToApi(apiPath, body) {
