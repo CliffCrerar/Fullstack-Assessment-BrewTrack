@@ -1,13 +1,7 @@
 ﻿using BrewTrack.Contracts;
 using BrewTrack.Helpers;
-using Google.Protobuf.WellKnownTypes;
-using System.Security.Policy;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using System.Linq;
-using MySqlX.XDevAPI.Relational;
 using BrewTrack.Models;
+using System.Text.Json;
 
 namespace BrewTrack.Infra
 {
@@ -19,16 +13,19 @@ namespace BrewTrack.Infra
         }
 
 
-        public async Task<object> GetData()
+
+
+        public async Task<IBrewPubApi[]> GetData()
         {
+            
             var data = await AppHttpClient.GetAsync(_apiUrl);
-            var jsonData = JsonSerializer.Deserialize<BrewPubs>(data) ?? new BrewPubs();
+            var jsonData = JsonSerializer.Deserialize<BrewPub[]>(data) ?? new [] { new BrewPub() };
             Ensure.ArgumentNotNull(jsonData, nameof(jsonData));
             if(jsonData != null)
             {
                 throw new NullReferenceException("Data returned from ");
             }
-            return Task.FromResult<IBrewPubApi>(jsonData);
+            return jsonData;
         }
     }
 }

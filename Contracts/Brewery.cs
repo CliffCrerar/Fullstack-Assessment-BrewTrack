@@ -1,6 +1,11 @@
 ﻿namespace BrewTrack.Contracts
 {
-    public interface IBrewPub
+    public interface ICoordinates
+    {
+            double Longitude { get; set; }
+            double Latitude { get; set; }
+    }
+    public interface IBrewPub: ICoordinates
     {
         string Id { get; set; }
         string Name { get; set; }
@@ -8,11 +13,5 @@
         string Website_Uri { get; set; }
         string Phone { get; set; }
         string Type { get; set; }
-    }
-
-    public interface IBrewPubApi: IBrewPub
-    {
-        string Longitude { get; set; }
-        string Latitude { get; set; }
     }
 }
