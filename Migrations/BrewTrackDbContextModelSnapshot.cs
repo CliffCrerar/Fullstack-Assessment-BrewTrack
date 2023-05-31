@@ -19,7 +19,26 @@ namespace BrewTrack.Migrations
                 .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("BrewTrack.Models.BrewPubs", b =>
+            modelBuilder.Entity("BrewTrack.Models.ApiSource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("ApiSourceId");
+
+                    b.Property<string>("ApiSourceName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("api_sources");
+                });
+
+            modelBuilder.Entity("BrewTrack.Models.BrewPub", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)")
@@ -56,6 +75,28 @@ namespace BrewTrack.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("brewpubs");
+                });
+
+            modelBuilder.Entity("BrewTrack.Models.CachedTimeline", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ApiSourceRefId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApiSourceRefId");
+
+                    b.HasIndex("Date")
+                        .IsDescending();
+
+                    b.ToTable("cached_timeline");
                 });
 
             modelBuilder.Entity("BrewTrack.Models.User", b =>
@@ -95,6 +136,20 @@ namespace BrewTrack.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("user_history");
+                });
+
+            modelBuilder.Entity("BrewTrack.Models.CachedTimeline", b =>
+                {
+                    b.HasOne("BrewTrack.Models.ApiSource", null)
+                        .WithMany("Timeline")
+                        .HasForeignKey("ApiSourceRefId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BrewTrack.Models.ApiSource", b =>
+                {
+                    b.Navigation("Timeline");
                 });
 #pragma warning restore 612, 618
         }

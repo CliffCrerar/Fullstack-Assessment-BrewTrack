@@ -8,5 +8,6 @@ namespace BrewTrack.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key, Column("UserHistoryId")]
         public int Id { get; set; }
+        [ForeignKey("UserId")] public int UserId { get; set; }
     }
 }

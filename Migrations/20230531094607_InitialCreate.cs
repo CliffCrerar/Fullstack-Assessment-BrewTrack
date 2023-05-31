@@ -16,6 +16,20 @@ namespace BrewTrack.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "api_sources",
+                columns: table => new
+                {
+                    ApiSourceId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    ApiSourceName = table.Column<string>(type: "longtext", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_api_sources", x => x.ApiSourceId);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "brewpubs",
                 columns: table => new
                 {
@@ -63,6 +77,37 @@ namespace BrewTrack.Migrations
                     table.PrimaryKey("PK_users", x => x.UserId);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "cached_timeline",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ApiSourceRefId = table.Column<Guid>(type: "char(36)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_cached_timeline", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_cached_timeline_api_sources_ApiSourceRefId",
+                        column: x => x.ApiSourceRefId,
+                        principalTable: "api_sources",
+                        principalColumn: "ApiSourceId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_cached_timeline_ApiSourceRefId",
+                table: "cached_timeline",
+                column: "ApiSourceRefId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_cached_timeline_Date",
+                table: "cached_timeline",
+                column: "Date",
+                descending: new bool[0]);
         }
 
         /// <inheritdoc />
@@ -72,10 +117,16 @@ namespace BrewTrack.Migrations
                 name: "brewpubs");
 
             migrationBuilder.DropTable(
+                name: "cached_timeline");
+
+            migrationBuilder.DropTable(
                 name: "user_history");
 
             migrationBuilder.DropTable(
                 name: "users");
+
+            migrationBuilder.DropTable(
+                name: "api_sources");
         }
     }
 }
