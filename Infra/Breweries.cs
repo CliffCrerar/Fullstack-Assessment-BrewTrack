@@ -1,4 +1,5 @@
 ﻿using BrewTrack.Contracts;
+using BrewTrack.Contracts.IBrewery;
 using BrewTrack.Helpers;
 using BrewTrack.Models;
 using System.Text.Json;
@@ -12,15 +13,12 @@ namespace BrewTrack.Infra
         {
         }
 
-
-
-
-        public async Task<IBrewPubApi[]> GetData()
+        public async Task<IBrewPub[]> GetData()
         {
             
             var data = await AppHttpClient.GetAsync(_apiUrl);
             var jsonData = JsonSerializer.Deserialize<BrewPub[]>(data) ?? new [] { new BrewPub() };
-            Ensure.ArgumentNotNull(jsonData, nameof(jsonData));
+            jsonData = Ensure.ArgumentNotNull(jsonData);
             if(jsonData != null)
             {
                 throw new NullReferenceException("Data returned from ");

@@ -12,7 +12,6 @@ namespace BrewTrack.Controllers
         public IActionResult Get()
         {
             var bp = new Breweries();
-            bp.GetData();
             return Ok();
         }
     }

@@ -1,19 +1,17 @@
 ﻿using BrewTrack.Contracts.IUser;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BrewTrack.Models
+namespace BrewTrack.Dto
 {
-    [Table("users"), Index( "EmailAddress", IsUnique = true )]
-    public class User: IUser
+    public class UserCreateRequestDto : IUserCreateRequestDto
     {
-        [Key, Column("UserId")]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        [EmailAddress]
+        [Required, EmailAddress]
         public string EmailAddress { get; set; } = string.Empty;
+        [Required]
         public string GivenName { get; set; } = string.Empty;
+        [Required]
         public string FamilyName { get; set; } = string.Empty;
+        [Required]
         public DateTime DateOfBirth { get; set; }
     }
 }

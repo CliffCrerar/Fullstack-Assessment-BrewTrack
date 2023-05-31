@@ -36,25 +36,38 @@ namespace BrewTrack.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("api_sources");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("93255bfd-fb9d-436f-bd8d-1d1980f406f8"),
+                            ApiSourceName = "Weather",
+                            DateCreated = new DateTime(2023, 5, 31, 17, 45, 58, 741, DateTimeKind.Utc).AddTicks(7441)
+                        },
+                        new
+                        {
+                            Id = new Guid("e8631575-a228-4bcc-acf8-816e00a8bc1d"),
+                            ApiSourceName = "Brewery",
+                            DateCreated = new DateTime(2023, 5, 31, 17, 45, 58, 741, DateTimeKind.Utc).AddTicks(7443)
+                        });
                 });
 
             modelBuilder.Entity("BrewTrack.Models.BrewPub", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
                         .HasColumnName("brewPubId");
 
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Latitude")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double");
 
-                    b.Property<string>("Longitude")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -101,9 +114,9 @@ namespace BrewTrack.Migrations
 
             modelBuilder.Entity("BrewTrack.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("char(36)")
                         .HasColumnName("UserId");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -111,7 +124,7 @@ namespace BrewTrack.Migrations
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("FamilyName")
                         .IsRequired()
@@ -123,6 +136,9 @@ namespace BrewTrack.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EmailAddress")
+                        .IsUnique();
+
                     b.ToTable("users");
                 });
 
@@ -132,6 +148,9 @@ namespace BrewTrack.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("UserHistoryId");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

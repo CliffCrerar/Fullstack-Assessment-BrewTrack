@@ -6,10 +6,10 @@ namespace BrewTrack.Models
     [Table("api_sources")]
     public class ApiSource
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("ApiSourceId")]
-        public Guid Id { get; set; }
+        [Key, Column("ApiSourceId")]
+        public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
-        public string ApiSourceName { get; set; }
+        public string ApiSourceName { get; set; } = string.Empty;
         [Required]
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
         [ForeignKey("ApiSourceRefId")]

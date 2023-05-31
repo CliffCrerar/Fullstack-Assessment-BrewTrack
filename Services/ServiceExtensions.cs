@@ -8,8 +8,8 @@ namespace BrewTrack.Services
 
             return services
                 .AddWeatherService(config)
-                .AddBReweriesService(config);
-            
+                .AddBreweriesService(config)
+                .AddUserService();
         }
     }
 }

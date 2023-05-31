@@ -4,9 +4,9 @@ namespace BrewTrack.Services
 {
     public static class BreweriesServiceExtension 
     {
-        public static IServiceCollection AddBReweriesService(this IServiceCollection services, IConfiguration config) 
+        public static IServiceCollection AddBreweriesService(this IServiceCollection services, IConfiguration config) 
         {
-            services.AddTransient<IBreweriesService>(provider =>
+            services.AddScoped<IBreweriesService,BreweriesService>(provider =>
             {
                 BrewTrackDbContext context = provider.GetService<BrewTrackDbContext>();
                 return new BreweriesService(context);
@@ -23,6 +23,9 @@ namespace BrewTrack.Services
         public BreweriesService(BrewTrackDbContext dbContext)
         {
 
+
         }
+
+
     }
 }

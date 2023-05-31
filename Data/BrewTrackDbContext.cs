@@ -5,36 +5,43 @@ namespace BrewTrack.Data;
 public class BrewTrackDbContext : DbContext
 {
     private IConfiguration _config;
+    private ILogger<BrewTrackDbContext> _logger;
     public BrewTrackDbContext(DbContextOptions<BrewTrackDbContext> options) : base(options)
     {
+        _logger = _getLogger();
         _config = new ConfigurationBuilder().Build();
+        _logger.LogInformation("Executed BrewTrackDbContext Constructor with DbContext Options Params");
     }
 
     public BrewTrackDbContext()
     {
+        _logger = _getLogger();
         _config = new ConfigurationBuilder().Build();
+        _logger.LogInformation("Executed BrewTrackDbContext Paramless Constructor");
     }
 
-    public void OnModelCreate(ModelBuilder modelBuilder)
+    private ILogger<BrewTrackDbContext> _getLogger()
     {
+        var loggerFac = new LoggerFactory();
+        var logger = loggerFac.CreateLogger<BrewTrackDbContext>();
+        loggerFac.Dispose();
+        return logger;
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        _logger.LogInformation("Executing On Model Create.");
         modelBuilder.Entity<ApiSource>().HasData(
             new ApiSource
             {
-                Id = new Guid(),
-                ApiSourceName = "Waether",
-                DateCreated = DateTime.UtcNow
+                ApiSourceName = "Weather",
             },
             new ApiSource
             {
-                Id = new Guid(),
                 ApiSourceName = "Brewery",
-                DateCreated = DateTime.UtcNow
             }
         );
     }
-
-    //protected override void OnConfiguring(DbContextOptionsBuilder options)
-    //    => options.UseMySQL(_config.GetConnectionString("MySql"));
 
     public DbSet<User> Users => Set<User>();
     public DbSet<UserHistory> UserHistory => Set<UserHistory>();
