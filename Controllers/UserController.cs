@@ -17,18 +17,18 @@ namespace BrewTrack.Controllers
             _logger = logger;
         }
 
-        [HttpGet("email/{email}")]
-        public IActionResult GetUserByEmail(string email)
+        [HttpGet("Email/{emailAddress}")]
+        public IActionResult GetUserByEmail(string emailAddress)
         {
             _logger.LogInformation("Get User By Email");
-            if (!_userService.CheckUserByEmail(email))
+            if (!_userService.CheckUserByEmail(emailAddress))
             {
                 return NotFound();
             }
             return Ok(_userService.User);
         }
 
-        [HttpGet("{UserId}")]
+        [HttpGet("UserID/{UserId}")]
         public IActionResult GetUserById(Guid id)
         {
             if (!_userService.CheckUserById(id))

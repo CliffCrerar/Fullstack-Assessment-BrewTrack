@@ -43,7 +43,7 @@ public class UserService : IUserService
     {
         var user = GetUserByEmail(email);
         _user = user;
-        return user == null;
+        return user != null;
     }
 
     public bool CheckUserById(Guid userId)
@@ -86,7 +86,7 @@ public class UserService : IUserService
     public User? GetUserByEmail(string email)
     {
         if (_user != null && _user.EmailAddress == email) return _user;
-        return _dbContext.Find<User>(new { Email = email });
+        return _dbContext.Users.Where(row => row.EmailAddress == email).FirstOrDefault();
     }
 
 }
