@@ -1,9 +1,17 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { NavItem } from 'reactstrap';
+import _ from "lodash";
+import { useEffect } from 'react';
 
 export function Home(props) {
   const displayName = props.name;
+  const hasStarted = localStorage.getItem("hasStarted");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if(Boolean(hasStarted)) {
+      navigate('/login')
+    }
+  })
 
     return (
       <div>
@@ -16,7 +24,7 @@ export function Home(props) {
         </ul>
         <p className="display-6">Jump right in:</p>
         <NavItem tag={Link} to="/login">
-        <button className="btn btn-primary btn-large">Get Started!</button>
+          <button onClick={()=> localStorage.setItem('hasStarted',true)} className="btn btn-primary btn-large">Get Started!</button>
         </NavItem>
       </div>
     );
