@@ -59,6 +59,7 @@ public class UserService : IUserService
         {
             User user = new User
             {
+                Id = new Guid(),
                 GivenName = userRequest.GivenName,
                 EmailAddress = userRequest.EmailAddress,
                 DateOfBirth = userRequest.DateOfBirth,

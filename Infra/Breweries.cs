@@ -17,12 +17,8 @@ namespace BrewTrack.Infra
         {
             
             var data = await AppHttpClient.GetAsync(_apiUrl);
-            var jsonData = JsonSerializer.Deserialize<BrewPub[]>(data) ?? new [] { new BrewPub() };
-            jsonData = Ensure.ArgumentNotNull(jsonData);
-            if(jsonData != null)
-            {
-                throw new NullReferenceException("Data returned from ");
-            }
+            var jsonData = JsonSerializer.Deserialize<BrewPub[]>(data) 
+                ?? throw new NullReferenceException("Data returned from ");
             return jsonData;
         }
     }

@@ -7,7 +7,7 @@ public static class Ensure
     /// </summary>
     /// <param name="argumentName">Name of the argument.</param>
     [DebuggerStepThrough]
-    public static T ArgumentNotNull<T>(T argument)
+    public static T ArgumentNotNull<T>(T? argument)
     {
         if (argument == null)
         {

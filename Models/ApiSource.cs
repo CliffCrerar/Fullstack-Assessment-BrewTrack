@@ -13,6 +13,6 @@ namespace BrewTrack.Models
         [Required]
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
         [ForeignKey("ApiSourceRefId")]
-        public CachedTimeline[] Timeline { get; set; }
+        public CachedTimeline[] Timeline { get; set; } = new CachedTimeline[] {  };
     }
 }

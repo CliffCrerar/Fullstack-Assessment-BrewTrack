@@ -1,5 +1,6 @@
 using BrewTrack.Data;
 using BrewTrack.DataContext;
+using BrewTrack.Helpers;
 using BrewTrack.Services;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -8,8 +9,8 @@ using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
-var mySqlConnectionString = configuration.GetConnectionString("MySql");
-var redisConnectionString = configuration.GetConnectionString("Redis");
+string mySqlConnectionString = Ensure.ArgumentNotNull(configuration.GetConnectionString("MySql"));
+string redisConnectionString = Ensure.ArgumentNotNull(configuration.GetConnectionString("Redis"));
 builder.Logging.AddConsole();
 // Add services to the container.
 services.AddControllersWithViews();
