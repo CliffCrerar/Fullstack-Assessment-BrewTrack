@@ -1,4 +1,7 @@
 ﻿using BrewTrack.Data;
+using BrewTrack.Helpers;
+using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace BrewTrack.Services
 {
@@ -8,8 +11,9 @@ namespace BrewTrack.Services
         {
             services.AddScoped<IBreweriesService,BreweriesService>(provider =>
             {
-                BrewTrackDbContext context = provider.GetService<BrewTrackDbContext>();
-                return new BreweriesService(context);
+                BrewTrackDbContext context = Ensure.ArgumentNotNull( provider.GetService<BrewTrackDbContext>());
+                IConnectionMultiplexer redis = Ensure.ArgumentNotNull(provider.GetService<IConnectionMultiplexer>());
+                return new BreweriesService(context, redis);
             });
             return services;
         }
@@ -20,10 +24,12 @@ namespace BrewTrack.Services
     }
     public class BreweriesService: IBreweriesService
     {
-        public BreweriesService(BrewTrackDbContext dbContext)
+        private readonly BrewTrackDbContext _dbContext;
+        private readonly IConnectionMultiplexer _redis;
+        public BreweriesService(BrewTrackDbContext dbContext, IConnectionMultiplexer redis)
         {
-
-
+            _dbContext = dbContext;
+            _redis = redis;
         }
 
 

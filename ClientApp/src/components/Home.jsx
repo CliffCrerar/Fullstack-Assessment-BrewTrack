@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { NavItem } from 'reactstrap';
 import { useEffect } from 'react';
 import _ from "lodash";
+import { getFromApi } from '../helpers';
 
 /**
  * @description The home component is where a user lands for the very first time visiting, the home component will record a users action in the local storage and subsequently a user using the same device will not be presented with this screen again.
@@ -19,7 +20,7 @@ export function Home(props) {
 		paragraph: 'Jump right in:',
 		getStartedBtn: 'Get Started!'
 	}
-
+	const userId = sessionStorage.getItem("userId"); // retrieve item from local storage
 	const hasStarted = localStorage.getItem("hasStarted"); // retrieve item from local storage
 
 	const navigate = useNavigate(); // function used for navigation
@@ -28,9 +29,16 @@ export function Home(props) {
 	// but only does so once rendering is complete
 	// if true nav to identification
 	useEffect(() => {
-		if (Boolean(hasStarted)) {
-			navigate('/login')
+		console.log(userId);
+		if (Boolean(userId)) {
+			getFromApi('/api/User/UserId/' + userId).then(result => {
+				console.log(result);
+				result.status === 200 && navigate('/breweries')
+			})
 		}
+		// if (Boolean(hasStarted)) {
+		// 	navigate('/login')
+		// }
 	})
 
 	return (

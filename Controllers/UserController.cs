@@ -28,10 +28,10 @@ namespace BrewTrack.Controllers
             return Ok(_userService.User);
         }
 
-        [HttpGet("UserID/{UserId}")]
-        public IActionResult GetUserById(Guid id)
+        [HttpGet("UserId/{userId}")]
+        public IActionResult GetUserById(Guid userId)
         {
-            if (!_userService.CheckUserById(id))
+            if (!_userService.CheckUserById(userId))
             {
                 return NotFound();
             }
@@ -43,12 +43,19 @@ namespace BrewTrack.Controllers
         public async Task<IActionResult> CreateUser(UserCreateRequestDto user)
         {
             if (!ModelState.IsValid) return BadRequest();
+
+            if(_userService.CheckUserByEmail(user.EmailAddress))
+            {
+                return Conflict();
+            }
+
             var createdUser = await _userService.CreateUser(user);
+
             if (createdUser == null) return new ObjectResult("User Not Created")
             {
                 StatusCode = StatusCodes.Status500InternalServerError
             };
-            return Created(Request.Path, user);
+            return Created(Request.Path, createdUser);
         }
     }
 }

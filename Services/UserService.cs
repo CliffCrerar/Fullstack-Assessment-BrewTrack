@@ -50,7 +50,7 @@ public class UserService : IUserService
     {
         var user = GetUserById(userId);
         _user = user;
-        return user == null;
+        return user != null;
     }
 
     public async Task<User> CreateUser(IUserCreateRequestDto userRequest)
@@ -59,7 +59,7 @@ public class UserService : IUserService
         {
             User user = new User
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 GivenName = userRequest.GivenName,
                 EmailAddress = userRequest.EmailAddress,
                 DateOfBirth = userRequest.DateOfBirth,
@@ -81,13 +81,15 @@ public class UserService : IUserService
     public User? GetUserById(Guid userId)
     {
         if(_user != null && _user.Id == userId) return _user;
-        return _dbContext.Find<User>(new { Id = userId });
+        _user = _dbContext.Users.Where(row => row.Id == userId).FirstOrDefault();
+        return _user;
     }
 
     public User? GetUserByEmail(string email)
     {
         if (_user != null && _user.EmailAddress == email) return _user;
-        return _dbContext.Users.Where(row => row.EmailAddress == email).FirstOrDefault();
+        _user = _dbContext.Users.Where(row => row.EmailAddress == email).FirstOrDefault();
+        return _user;
     }
 
 }

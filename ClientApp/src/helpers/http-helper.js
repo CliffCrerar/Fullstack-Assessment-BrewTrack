@@ -15,6 +15,9 @@ export async function postToApi(apiPath, body) {
 			body: JSON.stringify(body)
 		},
 		request = new Request(apiPath)
+	var r = await fetch(request, options);
+	var b = await r.json();
+	console.log(r, b);
 	return await fetch(request, options);
 }
 

@@ -3,12 +3,27 @@ import { BrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { createRoot } from 'react-dom/client';
 import 'bootstrap/scss/bootstrap.scss';
+import 'bootstrap/dist/js/bootstrap'
 import React from 'react';
 import App from './App';
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
+
+const forms = document.querySelectorAll('.needs-validation')
+
+// Loop over them and prevent submission
+Array.from(forms).forEach(form => {
+	form.addEventListener('submit', event => {
+		if (!form.checkValidity()) {
+			event.preventDefault()
+			event.stopPropagation()
+		}
+
+		form.classList.add('was-validated')
+	}, false)
+})
 
 root.render(
 	<BrowserRouter basename={baseUrl}>

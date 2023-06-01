@@ -6,18 +6,21 @@ using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 // Top Level Program Variables
-var builder = WebApplication.CreateBuilder(args);
-var services = builder.Services;
-var configuration = builder.Configuration;
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+IServiceCollection services = builder.Services;
+IConfiguration configuration = builder.Configuration;
 string mySqlConnectionString = Ensure.ArgumentNotNull(configuration.GetConnectionString("MySql"));
 string redisConnectionString = Ensure.ArgumentNotNull(configuration.GetConnectionString("Redis"));
 builder.Logging.AddConsole();
+
 // Add services to the container.
 services.AddControllersWithViews();
 services.AddDbContext<BrewTrackDbContext>(options => options.UseMySQL(mySqlConnectionString));
+
 //Configure other services up here
 
-services.AddSingleton<IConnectionMultiplexer>(options =>
+// Add Redis to service container
+services.AddSingleton<IRedis>(options =>
 {
     // using StackExchange.Redis;
     return ConnectionMultiplexer.Connect(redisConnectionString);
@@ -26,7 +29,8 @@ services.AddBrewTrackService(configuration);
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
-var app = builder.Build();
+
+/* BUILD APP */ var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
@@ -59,5 +63,5 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html");
 
 app
-    .MigrateDatabase()// migrate database before running application
-    .Run();
+    /* MIGRATE APP */ .MigrateDatabase()
+    /* RUN APP */ .Run();
