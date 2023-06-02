@@ -2,19 +2,30 @@
 
 namespace BrewTrack.Helpers
 {
-    internal interface IDataPage<T>
+    public interface IDataPages<T> where T : class
+    {
+        int Count { get; }
+        IList<DataPage<T>> Pages { get; }
+        IDictionary<int, string> PageKeysLookup { get; }
+        IDictionary<string, int> KeysPageLookup { get; }
+    }
+    public interface IDataPage<T>
     {
         string PageKey { get;  }
         int Page { get; }   
         int OfPages { get; }
         ArraySegment<T> Data { get; }
+        IDictionary<int, string>? PageKeysLookup { get; set; }
+        IDictionary<string, int>? KeysPageLookup { get; set; }
     }
-    internal class DataPage<T> : IDataPage<T> where T : class
+    public class DataPage<T> : IDataPage<T> where T : class
     {
         public string PageKey { get; }
         public int Page { get; }
         public int OfPages { get; }
         public ArraySegment<T> Data { get; }
+        public IDictionary<int, string>? PageKeysLookup { get; set; }
+        public IDictionary<string, int>? KeysPageLookup { get; set; }
         public DataPage(ArraySegment<T> data, int page, int ofPages, string? pageKeyPrefix)
         {
             PageKey = string.IsNullOrEmpty(pageKeyPrefix) ? Guid.NewGuid().ToString() : pageKeyPrefix + "-" + page.ToString();
@@ -22,6 +33,14 @@ namespace BrewTrack.Helpers
             OfPages = ofPages;
             Page = page;
         }
+    }
+
+    public class DataPages<T>: IDataPages<T> where T : class
+    {
+        public int Count { get; set; }
+        public IList<DataPage<T>> Pages { get; set; }
+        public IDictionary<int, string> PageKeysLookup { get; set; }
+        public IDictionary<string, int> KeysPageLookup { get; set; }
     }
 
     public class DataBook<T> where T : class
@@ -33,6 +52,8 @@ namespace BrewTrack.Helpers
         private readonly string _pageKeyPrefix;
         private readonly IList<T> _globalSet;
         private IList<DataPage<T>> _pages { get; }
+        private IDictionary<int, string> _pageKeys;
+        private IDictionary<string, int> _keysPage;
         public DataBook(IList<T> data, int recordsPerPage, string pageKeyPrefix = "Databook" )
         {
             _totalRecords = data.Count;
@@ -55,6 +76,8 @@ namespace BrewTrack.Helpers
                 int recordsPerpage = isLastPage ? _lastPageRecords : _recordsPerPage;
                 ArraySegment<T> dataSlice = new ArraySegment<T>(data, offset, _recordsPerPage);
                 DataPage<T> dataPage = new DataPage<T>(dataSlice, i, data.Length, _pageKeyPrefix);
+                _pageKeys.Add(i, dataPage.PageKey);
+                _keysPage.Add(dataPage.PageKey, i);
                 _pages.Add(dataPage);
             }
         }
@@ -65,6 +88,17 @@ namespace BrewTrack.Helpers
         public static DataBook<T> Create(IList<T> data, int recordsPerPage, string pageKeyPrefix)
         {
             return new DataBook<T>(data, recordsPerPage, pageKeyPrefix);
+        }
+
+        public DataPages<T> GetDataPages()
+        {
+            return Ensure.ArgumentNotNull( new DataPages<T>
+            {
+                Count = _totalPages,
+                PageKeysLookup = _pageKeys,
+                KeysPageLookup = _keysPage,
+                Pages = _pages
+            });
         }
     }
 }
