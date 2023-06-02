@@ -20,7 +20,7 @@ services.AddDbContext<BrewTrackDbContext>(options => options.UseMySQL(mySqlConne
 //Configure other services up here
 
 // Add Redis to service container
-services.AddSingleton<IRedis>(options =>
+services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>(options =>
 {
     // using StackExchange.Redis;
     return ConnectionMultiplexer.Connect(redisConnectionString);

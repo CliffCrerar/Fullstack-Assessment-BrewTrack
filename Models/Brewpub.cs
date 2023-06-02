@@ -8,11 +8,11 @@ namespace BrewTrack.Models
     public class BrewPub: IBrewPub
     {
         [Key, Column("brewPubId")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required(ErrorMessage = "No Longitude Provided")]
-        public double Longitude { get; set; }
+        public string Longitude { get; set; } = string.Empty;
         [Required(ErrorMessage = "No Latitude Provided")]
-        public double Latitude { get; set; }
+        public string Latitude { get; set; } = string.Empty;
         [Required(ErrorMessage ="No Name Provided")]
         public string Name { get; set; } = string.Empty;
         [Required(ErrorMessage = "No City Provided")]

@@ -2,13 +2,13 @@
 {
     public interface ICoordinates
     {
-        double Longitude { get; set; }
-        double Latitude { get; set; }
+        string Longitude { get; set; }
+        string Latitude { get; set; }
     }
 
     public interface IBrewPub : ICoordinates
     {
-        int Id { get; set; }
+        Guid Id { get; set; }
         string Name { get; set; }
         string City { get; set; }
         string Website_Uri { get; set; }

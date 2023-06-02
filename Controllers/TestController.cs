@@ -1,4 +1,6 @@
-﻿using BrewTrack.Infra;
+﻿using BrewTrack.Helpers;
+using BrewTrack.Infra;
+using BrewTrack.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +11,13 @@ namespace BrewTrack.Controllers
     public class TestController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var bp = new Breweries();
-            return Ok();
+            var bp = await Breweries.GetData();
+
+            var dataBook = new DataBook<BrewPub>(bp, 10);
+
+            return Ok(bp);
         }
     }
 }
