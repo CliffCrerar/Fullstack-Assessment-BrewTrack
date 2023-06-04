@@ -56,6 +56,30 @@ namespace BrewTrack.Infra
                     logger.LogError(ex.Message, ex);
                     throw;
                 }
+            }
+        }
+
+        public static async Task<IList<BrewPub>> GetPagedData(string page, string perPage)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                var logger = _logger();
+                logger.LogInformation("Getting Data from Api");
+                var pageApiUrl = string.Format(_apiUrl + "?page={0}&per_page={1}", page, perPage);
+                try
+                {
+                    var response = await client.GetFromJsonAsync<List<BrewPub>>(pageApiUrl);
+                    IList<BrewPub> converted = _mapApiData(Ensure.ArgumentNotNull(response));
+                    _disposeLoggerFac();
+                    logger.LogInformation("Data Retrieved");
+                    return converted;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogInformation("Error Retreiving Page data from Breweries API");
+                    logger.LogError(ex.Message, ex);
+                    throw;
+                }
 
             }
         }

@@ -38,7 +38,7 @@ public class BrewTrackDbContext : DbContext
             },
             new ApiSource
             {
-                ApiSourceName = "Brewery",
+                ApiSourceName = BrewTrackContstants.BrewerySourceKey,
             }
         );
     }

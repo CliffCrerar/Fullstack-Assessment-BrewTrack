@@ -40,49 +40,45 @@ namespace BrewTrack.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("93255bfd-fb9d-436f-bd8d-1d1980f406f8"),
+                            Id = new Guid("b897ceee-c082-4522-bbb7-18dc95105bea"),
                             ApiSourceName = "Weather",
-                            DateCreated = new DateTime(2023, 5, 31, 17, 45, 58, 741, DateTimeKind.Utc).AddTicks(7441)
+                            DateCreated = new DateTime(2023, 6, 4, 16, 54, 27, 866, DateTimeKind.Utc).AddTicks(3700)
                         },
                         new
                         {
-                            Id = new Guid("e8631575-a228-4bcc-acf8-816e00a8bc1d"),
-                            ApiSourceName = "Brewery",
-                            DateCreated = new DateTime(2023, 5, 31, 17, 45, 58, 741, DateTimeKind.Utc).AddTicks(7443)
+                            Id = new Guid("961356b3-e822-4824-8c2d-95467492de4d"),
+                            ApiSourceName = "Breweries",
+                            DateCreated = new DateTime(2023, 6, 4, 16, 54, 27, 866, DateTimeKind.Utc).AddTicks(3703)
                         });
                 });
 
             modelBuilder.Entity("BrewTrack.Models.BrewPub", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("char(36)")
                         .HasColumnName("brewPubId");
 
-                    b.Property<string>("City")
-                        .IsRequired()
+                    b.Property<string>("Brewery_Type")
                         .HasColumnType("longtext");
 
-                    b.Property<double>("Latitude")
-                        .HasColumnType("double");
+                    b.Property<string>("City")
+                        .HasColumnType("longtext");
 
-                    b.Property<double>("Longitude")
-                        .HasColumnType("double");
+                    b.Property<string>("Latitude")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Longitude")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Website_Uri")
-                        .IsRequired()
+                    b.Property<string>("Website_Url")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -149,8 +145,11 @@ namespace BrewTrack.Migrations
                         .HasColumnType("int")
                         .HasColumnName("UserHistoryId");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("LastPage")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 

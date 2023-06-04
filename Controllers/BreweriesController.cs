@@ -25,5 +25,26 @@ namespace BrewTrack.Controllers
             
             return Ok();
         }
+
+        [HttpGet("next-page/{userId}")]
+        public async Task<IActionResult> GetBrewDataNextPageForUser(Guid userId) 
+        {
+            var pageData = await _breweriesService.GetNextPageDataForUser(userId);
+            return Ok(pageData);
+        }
+
+        [HttpGet("prev-page/{userId}")]
+        public async Task<IActionResult> GetBrewDataPrevPageForUser(Guid userId)
+        {
+            var pageData = await _breweriesService.GetPrevPageDataForUser(userId);
+            return Ok(pageData);
+        }
+
+        [HttpGet("current")]
+        public async Task<IActionResult> GetBrewDataPageForUser(Guid userId)
+        {
+            var pageData = await _breweriesService.GetPageDataForUser(userId);
+            return Ok(pageData);
+        }
     }
 }
