@@ -18,9 +18,9 @@ namespace BrewTrack.Models
         [Required(ErrorMessage = "No City Provided")]
         public string City { get; set; } = string.Empty;
         [Required(ErrorMessage = "No Type Provided")]
-        public string Type { get; set; } = string.Empty;
+        public string Brewery_Type { get; set; } = string.Empty;
         [Required(ErrorMessage = "No Website_Uri Provided")]
-        public string Website_Uri { get; set; } = string.Empty;
+        public string Website_Url { get; set; } = string.Empty;
         [Required(ErrorMessage = "Required")]
         // [Phone ]
         [RegularExpression(@"^(\+\d{1, 2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$", ErrorMessage = "Not a valid phone number")]

@@ -11,7 +11,7 @@ IServiceCollection services = builder.Services;
 IConfiguration configuration = builder.Configuration;
 string mySqlConnectionString = Ensure.ArgumentNotNull(configuration.GetConnectionString("MySql"));
 string redisConnectionString = Ensure.ArgumentNotNull(configuration.GetConnectionString("Redis"));
-builder.Logging.AddConsole();
+builder.Logging.AddConsole().AddDebug();
 
 // Add services to the container.
 services.AddControllersWithViews();

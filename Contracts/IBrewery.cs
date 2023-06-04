@@ -2,17 +2,17 @@
 {
     public interface ICoordinates
     {
-        string Longitude { get; set; }
-        string Latitude { get; set; }
+        public string Longitude { get; set; }
+        public string Latitude { get; set; }
     }
 
     public interface IBrewPub : ICoordinates
     {
-        Guid Id { get; set; }
-        string Name { get; set; }
-        string City { get; set; }
-        string Website_Uri { get; set; }
-        string Phone { get; set; }
-        string Type { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string City { get; set; }
+        public string Website_Url { get; set; }
+        public string Phone { get; set; }
+        public string Brewery_Type { get; set; }
     }
 }

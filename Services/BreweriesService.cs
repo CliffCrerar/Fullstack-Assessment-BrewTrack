@@ -8,8 +8,12 @@ using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Text.Json;
 
+
 namespace BrewTrack.Services
 {
+    /// <summary>
+    /// BrewTrack breweries dependancjy injection service container extension
+    /// </summary>
     public static class BreweriesServiceExtension
     {
         public static IServiceCollection AddBreweriesService(this IServiceCollection services, IConfiguration config)
@@ -24,10 +28,16 @@ namespace BrewTrack.Services
             return services;
         }
     }
+    /// <summary>
+    /// Breweries service contract
+    /// </summary>
     public interface IBreweriesService
     {
         Task<IList<BrewPub>> GetData();
     }
+    /// <summary>
+    /// Breweries service concrete class
+    /// </summary>
     public class BreweriesService : IBreweriesService
     {
         private readonly string _sourceKey;
@@ -44,16 +54,31 @@ namespace BrewTrack.Services
             _logger = logger;
             _db = _redis.GetDatabase();
         }
-
+        /// <summary>
+        /// Get the last date data was cached in the database or if not data is cashed update the cache register
+        /// </summary>
+        /// <returns></returns>
         private DateTime _getCacheDate()
         {
-            DateTime cacheDate = _dbContext.CachedTimeline.Select(x => x.Date).FirstOrDefault();
-            DateTime timeStamp = DateTime.UtcNow;
-            bool isNullOrEmptyDate = string.IsNullOrEmpty(cacheDate.ToString());
-            if (isNullOrEmptyDate) _updateCacheRegister();
-            return isNullOrEmptyDate ? timeStamp : cacheDate;
+            try
+            {
+                DateTime cacheDate = _dbContext.CachedTimeline.Select(x => x.Date).FirstOrDefault();
+                bool isNullOrEmptyDate = string.IsNullOrEmpty(cacheDate.ToString());
+                if(isNullOrEmptyDate)
+                {
+                    throw new ArgumentNullException("No cachedate in database");
+                }
+                return cacheDate;
+            } 
+                catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return DateTime.MinValue;
+            }
         }
-
+        /// <summary>
+        /// Not used
+        /// </summary>
         private void _getBreweriesData()
         {
             if (!_db.KeyExists("Breweries"))
@@ -64,11 +89,18 @@ namespace BrewTrack.Services
             }
         }
 
+        /// <summary>
+        /// Get data from third party api integration
+        /// </summary>
+        /// <returns>IList<BrewPub></returns>
         private async Task<IList<BrewPub>> _brewPubApi()
         {
             return await Breweries.GetData();
         }
-
+        /// <summary>
+        /// Runs a check to test of the cache is stale
+        /// </summary>
+        /// <returns>bool</returns>
         private bool _isCacheStale()
         {
             return _cacheDate.AddHours(1) < DateTime.UtcNow;
@@ -94,14 +126,18 @@ namespace BrewTrack.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Ayncrounously updates the database with the latest data retreived from the api
+        /// </summary>
+        /// <param name="data"></param>
         private void _placeInDataBase(IList<BrewPub> data)
         {
             try
             {
                 _dbContext.Brewpubs.ExecuteDelete();
                 _dbContext.Brewpubs.AddRange(data);
-                _dbContext.SaveChangesAsync();
+                _dbContext.SaveChanges();
+                _updateCacheRegister();
             }
             catch (Exception ex)
             {
@@ -109,15 +145,30 @@ namespace BrewTrack.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Serialization short hand method
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private string _serialize<T>(T data) => JsonSerializer.Serialize<T>(data);
+        /// <summary>
+        /// Deserialization short hand method
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private T _deserialize<T>(string data) => Ensure.ArgumentNotNull(JsonSerializer.Deserialize<T>(data));
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="breweriesData"></param>
+        /// <returns></returns>
         private bool _storeApiDataInCache(IList<BrewPub> breweriesData)
         {
             try
             {
-                var dataToString = _serialize<IList<BrewPub>>(breweriesData);
+                var dataToString = _serialize(breweriesData);
                 _db.StringSet(_sourceKey, dataToString);
                 return true;
             }
@@ -140,6 +191,13 @@ namespace BrewTrack.Services
         {
             _logger.LogInformation("Service BreweriesService, running GetData Method");
             IList<BrewPub> data;
+            if(_isCacheStale())
+            {
+                data = await _brewPubApi();
+                _placeInDataBase(data);
+                _storeApiDataInCache(data);
+                return data;
+            }
             if (!_isBreweriesDataInCache)
             {
                 _logger.LogInformation("Data is not in Redis Database");
@@ -150,11 +208,10 @@ namespace BrewTrack.Services
                     data = await _brewPubApi();
                     _placeInDataBase(data);
                 }
-                _db.StringSet("Breweries", JsonSerializer.Serialize(data));
+                _storeApiDataInCache(data);
                 return data;
             }
-            var redisData = Ensure.ArgumentNotNull(_db.StringGet("Breweries").ToString());
-            return Ensure.ArgumentNotNull(_deserialize<BrewPub[]>(redisData));
+            return _retreiveApiDataFromCache();
         }
 
         public async Task<DataPage<BrewPub>> GetPagedData(string pageId)

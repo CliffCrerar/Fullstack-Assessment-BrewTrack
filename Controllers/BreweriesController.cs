@@ -18,9 +18,12 @@ namespace BrewTrack.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetBrewDataSet()
+        // public async Task<IActionResult> GetBrewDataSet()
         {
-            return Ok( _breweriesService.GetData());
+            _logger.LogInformation("Get Complete Breweries Data Set");
+            
+            return Ok();
         }
     }
 }

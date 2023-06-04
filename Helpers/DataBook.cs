@@ -9,7 +9,7 @@ namespace BrewTrack.Helpers
         IDictionary<int, string> PageKeysLookup { get; }
         IDictionary<string, int> KeysPageLookup { get; }
     }
-    public interface IDataPage<T>
+    public interface IDataPage<T> where T: class
     {
         string PageKey { get;  }
         int Page { get; }   
@@ -58,11 +58,13 @@ namespace BrewTrack.Helpers
         {
             _totalRecords = data.Count;
             _recordsPerPage = recordsPerPage;
-            _totalPages = int.Parse(Math.Floor( decimal.Parse( _totalRecords.ToString() ) / decimal.Parse(_recordsPerPage.ToString())).ToString()) + 1;
+            _totalPages = int.Parse(Math.Floor( decimal.Parse( _totalRecords.ToString() ) / decimal.Parse(_recordsPerPage.ToString())).ToString());
             _lastPageRecords = _totalRecords % _recordsPerPage == 0 ? _recordsPerPage : _totalRecords % _recordsPerPage;
             _globalSet = data;
             _pages = new List<DataPage<T>>();
             _pageKeyPrefix = pageKeyPrefix;
+            _pageKeys = new Dictionary<int, string>();
+            _keysPage = new Dictionary<string, int>();
             _populateObject();
         }
 
@@ -75,7 +77,7 @@ namespace BrewTrack.Helpers
                 bool isLastPage = i == data.Length -1;
                 int recordsPerpage = isLastPage ? _lastPageRecords : _recordsPerPage;
                 ArraySegment<T> dataSlice = new ArraySegment<T>(data, offset, _recordsPerPage);
-                DataPage<T> dataPage = new DataPage<T>(dataSlice, i, data.Length, _pageKeyPrefix);
+                DataPage<T> dataPage = new DataPage<T>(dataSlice, i, _totalPages, _pageKeyPrefix);
                 _pageKeys.Add(i, dataPage.PageKey);
                 _keysPage.Add(dataPage.PageKey, i);
                 _pages.Add(dataPage);

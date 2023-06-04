@@ -1,4 +1,6 @@
-﻿using BrewTrack.Helpers;
+﻿using BrewTrack.Contracts.IBrewery;
+using BrewTrack.Dto;
+using BrewTrack.Helpers;
 using BrewTrack.Models;
 
 namespace BrewTrack.Infra
@@ -33,7 +35,7 @@ namespace BrewTrack.Infra
         /// Get the data from the breweries api
         /// </summary>
         /// <returns>Task<List<BrewPub>></returns>
-        public static async Task<List<BrewPub>> GetData()
+        public static async Task<IList<BrewPub>> GetData()
         {
             using (HttpClient client = new HttpClient())
             {
@@ -42,9 +44,11 @@ namespace BrewTrack.Infra
                 try
                 {
                     var response = await client.GetFromJsonAsync<List<BrewPub>>(_apiUrl);
+
+                    IList<BrewPub> converted = _mapApiData(Ensure.ArgumentNotNull(response));
                     _disposeLoggerFac();
                     logger.LogInformation("Data Retrieved");
-                    return Ensure.ArgumentNotNull(response);
+                    return converted;
                 } 
                 catch (Exception ex)
                 {
@@ -54,6 +58,12 @@ namespace BrewTrack.Infra
                 }
 
             }
+        }
+
+        private static List<BrewPub> _mapApiData(List<BrewPub> data)
+        {
+            
+            return data;
         }
     }
 }
