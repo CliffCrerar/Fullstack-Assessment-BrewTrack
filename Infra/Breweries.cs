@@ -84,10 +84,38 @@ namespace BrewTrack.Infra
             }
         }
 
+        public static async Task<BreweriesMetaDto> GetBreweriesMeta()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                var logger = _logger();
+                logger.LogInformation("Getting breweries meta");
+                try
+                {
+                    var response = await client.GetFromJsonAsync<BreweriesMetaDto>(_apiUrl + "/meta");
+                    BreweriesMetaDto converted = _mapApiMetaData(Ensure.ArgumentNotNull(response));
+                    _disposeLoggerFac();
+                    logger.LogInformation("Meta Data Retreived");
+                    return converted;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogInformation("Error Retreiving meta data from Breweries API");
+                    logger.LogError(ex.Message, ex);
+                    throw;
+                }
+            }
+        }
+
         private static List<BrewPub> _mapApiData(List<BrewPub> data)
         {
-            
+
             return data;
+        }
+
+        private static BreweriesMetaDto _mapApiMetaData(BreweriesMetaDto metaData)
+        {
+            return metaData;
         }
     }
 }

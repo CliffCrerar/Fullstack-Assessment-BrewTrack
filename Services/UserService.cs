@@ -44,7 +44,7 @@ public class UserService : IUserService
         var user = GetUserByEmail(email);
         _user = user;
         return user != null;
-    }
+        }
 
     public bool CheckUserById(Guid userId)
     {

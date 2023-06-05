@@ -26,7 +26,7 @@ namespace BrewTrack.Controllers
                 return NotFound();
             }
             return Ok(_userService.User);
-        }
+            }
 
         [HttpGet("UserId/{userId}")]
         public IActionResult GetUserById(Guid userId)

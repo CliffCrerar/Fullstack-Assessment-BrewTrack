@@ -1,5 +1,7 @@
 
 export { FriendlyError } from './FriendlyError';
+export { FormBuilder } from './Formbuilder';
+export { Pagination } from './Pagination';
 export { FetchData } from './FetchData';
 export { Breweries } from './Breweries';
 export { Identity } from './Identity';

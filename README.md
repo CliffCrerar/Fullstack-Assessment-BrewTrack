@@ -40,7 +40,7 @@ To configure the application with its required infrastructure please create a `a
   "WeatherApiKey": "<weather api key>",
   "ConnectionStrings": {
     "MySql": "Server=localhost;Port=3306;User ID=root;Database=BrewTrack",
-    "Redis": "<redis connection string>"
+    "Redis": "localhost:6379"
   }
  ```
 

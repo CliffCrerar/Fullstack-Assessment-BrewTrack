@@ -13,14 +13,14 @@ const AppRoutes = [
 		path: '/register',
 		element: <Register />
 	},
-	{
-		path: '/counter',
-		element: <Counter />
-	},
-	{
-		path: '/fetch-data',
-		element: <FetchData />
-	},
+	// {
+	// 	path: '/counter',
+	// 	element: <Counter />
+	// },
+	// {
+	// 	path: '/fetch-data',
+	// 	element: <FetchData />
+	// },
 	{
 		path: '/breweries',
 		element: <Breweries />

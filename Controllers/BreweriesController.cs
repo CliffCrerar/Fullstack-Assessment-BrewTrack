@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
+using BrewTrack.Dto;
+using BrewTrack.Contracts.IBrewery;
 
 namespace BrewTrack.Controllers
 {
@@ -40,11 +42,19 @@ namespace BrewTrack.Controllers
             return Ok(pageData);
         }
 
-        [HttpGet("current")]
+        [HttpGet("current/{userId}")]
+        [ProducesDefaultResponseType(typeof(BreweriesCurrentUserStateDto))]
         public async Task<IActionResult> GetBrewDataPageForUser(Guid userId)
         {
             var pageData = await _breweriesService.GetPageDataForUser(userId);
-            return Ok(pageData);
+            int lastPageFromUser = await _breweriesService.RetrieveLastPageFromUser(userId);
+            int totalPages = (await _breweriesService.GetBreweriesMeta()).Total / 10;
+            return Ok(new BreweriesCurrentUserStateDto
+            {
+                Data = pageData,
+                LastVisitedPage = lastPageFromUser,
+                TotalPages = totalPages
+            });
         }
     }
 }

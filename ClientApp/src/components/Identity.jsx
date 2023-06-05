@@ -11,12 +11,21 @@ export function Identity() {
 
     const // dev values
         testVal = {
-            useDevValue: true,
+            useDevValue: false,
             value: 'Cliff.Crerar@gmail.com'
         };
 
     const cardStyles = { // card styles
         maxWidth: '25rem'
+    }
+
+    const [formData, setFormData] = useState({
+        email: ""
+    })
+
+    const handleChange = (changeEvent) =>  {
+        const {name, value} = changeEvent.target;
+        setFormData(prevData => ({...prevData, email: value}) )
     }
 
     const // spinner states handlers
@@ -42,14 +51,10 @@ export function Identity() {
 
     // form submission handler
     function onCheckEmailSubmit(ev) {
-        showSpinner();
-        ev.persist();
         ev.preventDefault();
-        const
-            formData = new FormData(ev.target),
-            email = formData.get('email');
-
-        checkEmail(email)
+        ev.persist();
+        showSpinner();
+        checkEmail(formData.email)
             .catch(error => {
                 console.error(error);
                 nav('/friendly-error?error=' + error)
@@ -57,7 +62,7 @@ export function Identity() {
             .then(value => {
                 const navTo = value
                     ? '/breweries'
-                    : '/register?emailAddress=' + email;
+                    : '/register?emailAddress=' + formData.email;
                 nav(navTo);
             });
     }
@@ -86,12 +91,12 @@ export function Identity() {
 
                 <CardBody>
 
-                    <form name="email-check-form" onSubmit={onCheckEmailSubmit}>
+                    <form name="email-check-form" onSubmit={(ev)=>onCheckEmailSubmit(ev)}>
 
                         <InputGroup >
                             <InputGroupText><FcLock /></InputGroupText>
                             <Input
-                                onChange={(c) => { console.log(c) }}
+                                onChange={(c) =>  handleChange(c) }
                                 placeholder="Email Address"
                                 className="form-control"
                                 name="email"
@@ -106,7 +111,7 @@ export function Identity() {
                             </small>
                         </CardSubtitle>
                         <hr />
-                        <Button className="m-auto d-block" color="secondary">
+                        <Button type="submit" className="m-auto d-block" color="secondary">
                             {buttonText}<Spinner hidden={spinnerHidden} size="sm"></Spinner>
                         </Button>
                         <hr />

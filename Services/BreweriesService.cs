@@ -1,5 +1,6 @@
 ﻿using BrewTrack.Contracts.IBrewery;
 using BrewTrack.Data;
+using BrewTrack.Dto;
 using BrewTrack.Helpers;
 using BrewTrack.Infra;
 using BrewTrack.Models;
@@ -37,6 +38,8 @@ namespace BrewTrack.Services
         Task<IList<BrewPub>> GetPageDataForUser(Guid userId);
         Task<IList<BrewPub>> GetNextPageDataForUser(Guid userId);
         Task<IList<BrewPub>> GetPrevPageDataForUser(Guid userId);
+        Task<BreweriesMetaDto> GetBreweriesMeta();
+        Task<int> RetrieveLastPageFromUser(Guid userId);
     }
     /// <summary>
     /// Breweries service concrete class
@@ -45,6 +48,7 @@ namespace BrewTrack.Services
     {
         private readonly int _recordsPerPage;
         private readonly string _sourceKey;
+        private readonly string _sourceKeyMeta;
         private readonly BrewTrackDbContext _dbContext;
         private readonly IConnectionMultiplexer _redis;
         private readonly ILogger<BreweriesService> _logger;
@@ -53,6 +57,7 @@ namespace BrewTrack.Services
         public BreweriesService(BrewTrackDbContext dbContext, IConnectionMultiplexer redis, ILogger<BreweriesService> logger)
         {
             _sourceKey = Ensure.ArgumentNotNull( BrewTrackContstants.BrewerySourceKey);
+            _sourceKeyMeta = Ensure.ArgumentNotNull(BrewTrackContstants.BrewerySourceKey) + "Meta";
             _dbContext = dbContext;
             _redis = redis;
             _logger = logger;
@@ -298,6 +303,28 @@ namespace BrewTrack.Services
             }
             _updateUserPage(lastPage, userId);
             return await _retreivePage(lastPage);
+        }
+
+
+        public async Task<BreweriesMetaDto> GetBreweriesMeta()
+        {
+            BreweriesMetaDto data;
+            if (_db.KeyExists(_sourceKeyMeta))
+            {
+                var stringData = _db.StringGet(_sourceKeyMeta);
+                data = _deserialize<BreweriesMetaDto>(Ensure.ArgumentNotNull(stringData));
+            } else
+            {
+                data = await Breweries.GetBreweriesMeta();
+                var stringData = _serialize(data);
+                _db.StringSet(_sourceKeyMeta, stringData);
+            }
+            return data;
+        }
+
+        public async Task<int> RetrieveLastPageFromUser(Guid userId)
+        {
+            return await _getLastPageForUser(userId);
         }
 
 
