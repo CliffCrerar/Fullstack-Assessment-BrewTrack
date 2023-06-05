@@ -1,7 +1,7 @@
 
 
 export function Pagination({next,prev, currentPage, pageCount}) {
-
+    var iterator = new Array(pageCount);
     const onNextPrevClick = (ev) => {
         const btnId = ev.target.id;
         if(btnId === "prevPage") {
@@ -22,9 +22,17 @@ export function Pagination({next,prev, currentPage, pageCount}) {
                     </button>
                 </li>
 
-                <li className="page-item"><button className="page-link" href="#">1</button></li>
-                <li className="page-item"><button className="page-link" href="#">2</button></li>
-                <li className="page-item"><button className="page-link" href="#">3</button></li>
+                <li className="page-item">
+                    <button className="page-link" href="#">1</button>
+                </li>
+
+                <li className="page-item">
+                    <button className="page-link" href="#">2</button>
+                </li>
+
+                <li className="page-item">
+                    <button className="page-link" href="#">3</button>
+                </li>
 
                 <li className="page-item">
                     <button id="nextPage" onClick={onNextPrevClick} className="page-link" href="#" aria-label="Next">
