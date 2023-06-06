@@ -23,9 +23,9 @@ export function Identity() {
         email: ""
     })
 
-    const handleChange = (changeEvent) =>  {
-        const {name, value} = changeEvent.target;
-        setFormData(prevData => ({...prevData, email: value}) )
+    const handleChange = (changeEvent) => {
+        const { name, value } = changeEvent.target;
+        setFormData(prevData => ({ ...prevData, email: value }))
     }
 
     const // spinner states handlers
@@ -91,12 +91,12 @@ export function Identity() {
 
                 <CardBody>
 
-                    <form name="email-check-form" onSubmit={(ev)=>onCheckEmailSubmit(ev)}>
+                    <form name="email-check-form" onSubmit={(ev) => onCheckEmailSubmit(ev)}>
 
                         <InputGroup >
                             <InputGroupText><FcLock /></InputGroupText>
                             <Input
-                                onChange={(c) =>  handleChange(c) }
+                                onChange={(c) => handleChange(c)}
                                 placeholder="Email Address"
                                 className="form-control"
                                 name="email"

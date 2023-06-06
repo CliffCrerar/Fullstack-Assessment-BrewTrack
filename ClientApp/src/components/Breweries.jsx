@@ -15,7 +15,8 @@ export function Breweries(props) {
 		currentPage: null,
 		pageData: null,
 		totalPages: null,
-		loaderStyle: { display: 'block' }
+		loaderStyle: { display: 'block' },
+		weatherDisplay: { displayState: "", data: null },
 	})
 	const restApiEndpoint = '/api/Breweries/';
 	const { current, prev, next, selected } = {
@@ -27,6 +28,7 @@ export function Breweries(props) {
 	}
 	const showLoader = () => setPageState(currentState => ({ ...currentState, loaderStyle: { display: 'block' } }))
 	const hideLoader = () => setPageState(currentState => ({ ...currentState, loaderStyle: { display: 'none' } }))
+	const setWeatherDisplayState = (displayState, data = null) => setPageState(currentState => ({ ...currentState, weatherDisplay: { displayState, data } }))
 	const handleResponse = (body) => {
 		console.log(body);
 		setPageState(prevState => {
@@ -65,8 +67,23 @@ export function Breweries(props) {
 
 	const getSelectedPage = (pageNo) => getFromApi(`${selected}/page-no/${pageNo}`).then(handleResponse)
 
-	const getWeather = (longitude, latitude) => {
-		getFromApi(`/api/weather?longitude=${longitude}&latitude=${latitude}`);
+	const fetchWeatherData = () => {
+		fetch("https://gist.githubusercontent.com/CliffCrerar/569b66b170ddf9fbce57a1908445c82e/raw/8f276a10c1757f2fec0a1ec110248c37cb0c7d98/weather")
+			.then(res => res.text())
+			.then(body => {
+				const jsonBody = JSON.parse(body)
+				console.log("🚀 ~ file: WeatherWidget.jsx:14 ~ fetchWeatherData ~ jsonBody:", jsonBody)
+				// setWeatherData(jsonBody);
+				setWeatherDisplayState('hasLoaded', jsonBody)
+			})
+	}
+
+	const getWeather = (latitude, longitude) => {
+		setWeatherDisplayState('loading');
+		fetchWeatherData()
+		// getFromApi(`/api/weather?longitude=${longitude}&latitude=${latitude}`);
+
+
 	}
 
 	useEffect(() => {
@@ -96,7 +113,7 @@ export function Breweries(props) {
 
 												{pageState.pageData.map(({ id, brewery_Type, city, latitude, longitude, name, phone, website_Url }, idx) => {
 													return (
-														<ListGroupItem key={idx} className="border-start mw-100 col-md " aria-current="true">
+														<ListGroupItem key={idx} className="border-start mw-100 col-md" aria-current="true">
 															<div className="d-flex w-100 justify-content-between">
 																<h5 className="mb-1">{name}</h5>
 
@@ -117,7 +134,7 @@ export function Breweries(props) {
 																	<MdLocationOff className="mb-1" />No location info
 																</small>
 																<small hidden={latitude == null} className="flex-one text-end">
-																	<button onClick={() => getWeather(longitude, latitude)} className="btn btn-secondary btn-sm text-end">Weather info</button>
+																	<button onClick={() => getWeather(latitude, longitude)} className="btn btn-secondary btn-sm text-end">Weather info</button>
 																</small>
 															</div>
 															<div className="d-flex w-100 justify-content-between">
@@ -142,7 +159,10 @@ export function Breweries(props) {
 									</div>
 									<div className="col-md position-relative">
 										<div className="h-100">
-											<WeatherWidget></WeatherWidget>
+											<WeatherWidget
+												displayState={pageState.weatherDisplay.displayState}
+												weatherData={pageState.weatherDisplay.data}
+											></WeatherWidget>
 										</div>
 									</div>
 
