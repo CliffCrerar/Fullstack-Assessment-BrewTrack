@@ -40,15 +40,15 @@ namespace BrewTrack.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b897ceee-c082-4522-bbb7-18dc95105bea"),
+                            Id = new Guid("3e95d8d8-3717-49a8-8918-6b272d409060"),
                             ApiSourceName = "Weather",
-                            DateCreated = new DateTime(2023, 6, 4, 16, 54, 27, 866, DateTimeKind.Utc).AddTicks(3700)
+                            DateCreated = new DateTime(2023, 6, 6, 12, 10, 7, 677, DateTimeKind.Utc).AddTicks(3244)
                         },
                         new
                         {
-                            Id = new Guid("961356b3-e822-4824-8c2d-95467492de4d"),
+                            Id = new Guid("c66efa9d-b675-4eb8-b631-7061e62d3df5"),
                             ApiSourceName = "Breweries",
-                            DateCreated = new DateTime(2023, 6, 4, 16, 54, 27, 866, DateTimeKind.Utc).AddTicks(3703)
+                            DateCreated = new DateTime(2023, 6, 6, 12, 10, 7, 677, DateTimeKind.Utc).AddTicks(3248)
                         });
                 });
 
@@ -147,6 +147,9 @@ namespace BrewTrack.Migrations
 
                     b.Property<int>("LastPage")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");

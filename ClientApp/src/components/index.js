@@ -1,7 +1,8 @@
 
+export { PaginationWidget } from './PaginationWidget';
 export { FriendlyError } from './FriendlyError';
-export { FormBuilder } from './Formbuilder';
-export { Pagination } from './Pagination';
+export { WeatherWidget } from './WeatherWidget'
+export { FormBuilder } from './FormBuilder';
 export { FetchData } from './FetchData';
 export { Breweries } from './Breweries';
 export { Identity } from './Identity';

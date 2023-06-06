@@ -1,12 +1,10 @@
-﻿using BrewTrack.Contracts.IBrewery;
-using BrewTrack.Data;
+﻿using BrewTrack.Data;
 using BrewTrack.Dto;
 using BrewTrack.Helpers;
 using BrewTrack.Infra;
 using BrewTrack.Models;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using System.Collections.Generic;
 using System.Text.Json;
 
 
@@ -34,11 +32,10 @@ namespace BrewTrack.Services
     /// </summary>
     public interface IBreweriesService
     {
-        Task<IList<BrewPub>> GetData();
-        Task<IList<BrewPub>> GetPageDataForUser(Guid userId);
-        Task<IList<BrewPub>> GetNextPageDataForUser(Guid userId);
-        Task<IList<BrewPub>> GetPrevPageDataForUser(Guid userId);
-        Task<BreweriesMetaDto> GetBreweriesMeta();
+        Task<BreweriesCurrentUserStateDto> GetPageDataForUser(Guid userId);
+        Task<BreweriesCurrentUserStateDto> GetNextPageDataForUser(Guid userId);
+        Task<BreweriesCurrentUserStateDto> GetPrevPageDataForUser(Guid userId);
+        Task<BreweriesCurrentUserStateDto> GetDataForPage(Guid userId, int pageNo);
         Task<int> RetrieveLastPageFromUser(Guid userId);
     }
     /// <summary>
@@ -61,7 +58,7 @@ namespace BrewTrack.Services
             _dbContext = dbContext;
             _redis = redis;
             _logger = logger;
-            _recordsPerPage = 10;
+            _recordsPerPage = BrewTrackContstants.RecordsPerPage;
             _db = _redis.GetDatabase();
         }
         /// <summary>
@@ -136,25 +133,7 @@ namespace BrewTrack.Services
                 throw;
             }
         }
-        /// <summary>
-        /// Ayncrounously updates the database with the latest data retreived from the api
-        /// </summary>
-        /// <param name="data"></param>
-        private void _placeInDataBase(IList<BrewPub> data)
-        {
-            try
-            {
-                _dbContext.Brewpubs.ExecuteDelete();
-                _dbContext.Brewpubs.AddRange(data);
-                _dbContext.SaveChanges();
-                _updateCacheRegister();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                throw;
-            }
-        }
+
         /// <summary>
         /// Serialization short hand method
         /// </summary>
@@ -197,123 +176,93 @@ namespace BrewTrack.Services
 
         private bool _isBreweriesDataInCache => _db.KeyExists(BrewTrackContstants.BreweryApiResource);
 
-        private void _updateUserPage(int pageNo, Guid userId)
+        private async void _updateUserPage(int pageNo, Guid userId)
         {
-            var userHistRow = new UserHistory
+            try
             {
-                LastPage = pageNo,
-                UserId = userId
-            };
-            _dbContext.UserHistory.Add(userHistRow);
-            _dbContext.SaveChanges(_isBreweriesDataInCache);
+                var userHistRow = new UserHistory
+                {
+                    LastPage = pageNo,
+                    UserId = userId
+                };
+                _dbContext.UserHistory.Add(userHistRow);
+                await _dbContext.SaveChangesAsync(_isBreweriesDataInCache);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+            }
+
         }
 
-        private async Task<int> _getLastPageForUser(Guid userId)
+        private async Task<int> _getPageForUser(Guid userId)
         {
             try
             {
                 return await _dbContext.UserHistory
                     .Where(row => row.UserId == userId)
-                    .OrderByDescending(row => row.Id)
+                    .OrderBy(row => row.Id)
                     .Select(row => row.LastPage)
                     .LastAsync<int>();
-            } catch (Exception ex)
+            } 
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message, ex);
                 _logger.LogInformation("No Record for user");
-                return 0;
+                return 1;
             }
-
         }
 
-        private async Task<IList<BrewPub>> _retreivePage(int page)
+        private async Task<IList<BrewPub>> _retreivePageData(int page)
         {
-            string pageKey = BrewTrackContstants.BrewerySourceKey + page.ToString();
-            if (_db.KeyExists(pageKey))
+            try
             {
-                var pageDataString = _db.StringGet(pageKey);
-                return _deserialize<IList<BrewPub>>(Ensure.ArgumentNotNull(pageDataString));
-            }
-            var pageDataFromApi = await Breweries.GetPagedData(page.ToString(), _recordsPerPage.ToString());
-            _db.StringSet(pageKey, _serialize(pageDataFromApi));
-            return pageDataFromApi;
-        }
-
-        public async Task<IList<BrewPub>> GetData()
-        {
-            _logger.LogInformation("Service BreweriesService, running GetData Method");
-            IList<BrewPub> data;
-            if(_isCacheStale())
-            {
-                data = await _brewPubApi();
-                _placeInDataBase(data);
-                _storeApiDataInCache(data);
-                return data;
-            }
-            if (!_isBreweriesDataInCache)
-            {
-                _logger.LogInformation("Data is not in Redis Database");
-                data = _dbContext.Brewpubs.ToList();
-                if(data.Count == 0) 
+                string pageKey = BrewTrackContstants.BrewerySourceKey + "_page_" + page.ToString();
+                if (_db.KeyExists(pageKey))
                 {
-                    _logger.LogInformation("Data is not in MySql Database");
-                    data = await _brewPubApi();
-                    _placeInDataBase(data);
+                    var pageDataString = _db.StringGet(pageKey);
+                    return _deserialize<IList<BrewPub>>(Ensure.ArgumentNotNull(pageDataString));
                 }
-                _storeApiDataInCache(data);
-                return data;
+                var pageDataFromApi = await Breweries.GetPagedData(page.ToString(), _recordsPerPage.ToString());
+                _db.StringSet(pageKey, _serialize(pageDataFromApi));
+                return pageDataFromApi;
+            } 
+            catch(Exception ex)
+            {
+                _logger.LogInformation("Error occured while _retreivePageData.");
+                _logger.LogError(ex.Message, ex);
+                throw;
             }
-            return _retreiveApiDataFromCache();
+
         }
 
-        public async Task<IList<BrewPub>> GetNextPageDataForUser(Guid userId)
+        private async Task<BreweriesCurrentUserStateDto> _createPageResponse(int page)
         {
-            return await _getPagedData(userId, true);
-        }
-        public async Task<IList<BrewPub>> GetPrevPageDataForUser(Guid userId)
-        {
-            return await _getPagedData(userId, false);
-        }
-        public async Task<IList<BrewPub>> GetPageDataForUser(Guid userId)
-        {
-            return await _getPagedData(userId);
-        }
-        private async Task<IList<BrewPub>> _getPagedData(Guid userId)
-        {
-            var lastPage = await _getLastPageForUser(userId);
-            if (lastPage == 0)
+            try
             {
-                lastPage = 1;
+                return new BreweriesCurrentUserStateDto
+                {
+                    OfPages = (await _getBreweriesMeta()).Total / _recordsPerPage,
+                    PageData = await _retreivePageData(page),
+                    PageNo = page
+                };
+            } catch(Exception ex)
+            {
+                _logger.LogInformation("Error occured while creating user page data dto.");
+                _logger.LogError(ex.Message, ex);
+                throw;
             }
-            return await _retreivePage(lastPage);
-        }
-        private async Task<IList<BrewPub>> _getPagedData(Guid userId, bool nextPage)
-        {
-            var lastPage = await _getLastPageForUser(userId);
-            if(lastPage == 0)
-            {
-                lastPage = 1;
-            }
-            else if(nextPage)
-            {
-                lastPage++;
-            } else
-            {
-                lastPage = lastPage == 1 ? 1 : lastPage--;
-            }
-            _updateUserPage(lastPage, userId);
-            return await _retreivePage(lastPage);
         }
 
-
-        public async Task<BreweriesMetaDto> GetBreweriesMeta()
+        public async Task<BreweriesMetaDto> _getBreweriesMeta()
         {
             BreweriesMetaDto data;
             if (_db.KeyExists(_sourceKeyMeta))
             {
                 var stringData = _db.StringGet(_sourceKeyMeta);
                 data = _deserialize<BreweriesMetaDto>(Ensure.ArgumentNotNull(stringData));
-            } else
+            }
+            else
             {
                 data = await Breweries.GetBreweriesMeta();
                 var stringData = _serialize(data);
@@ -322,31 +271,33 @@ namespace BrewTrack.Services
             return data;
         }
 
-        public async Task<int> RetrieveLastPageFromUser(Guid userId)
+        public async Task<BreweriesCurrentUserStateDto> GetNextPageDataForUser(Guid userId)
         {
-            return await _getLastPageForUser(userId);
+            int currentPage = await _getPageForUser(userId);
+            _updateUserPage(++currentPage, userId);
+            return await _createPageResponse(currentPage);
+        }
+        public async Task<BreweriesCurrentUserStateDto> GetPrevPageDataForUser(Guid userId)
+        {
+            int currentPage = await _getPageForUser(userId);
+            _updateUserPage(--currentPage, userId);
+            return await _createPageResponse(currentPage);
+        }
+        public async Task<BreweriesCurrentUserStateDto> GetPageDataForUser(Guid userId)
+        {
+            int currentPage = await _getPageForUser(userId);
+            return await _createPageResponse(currentPage);
         }
 
+        public async Task<BreweriesCurrentUserStateDto> GetDataForPage(Guid userId, int pageNo)
+        {
+            _updateUserPage(pageNo, userId);
+            return await _createPageResponse(pageNo);
+        }
 
-        //public async Task<DataPage<BrewPub>> GetPagedData(string pageId)
-        //{
-        //    if(!_db.KeyExists(pageId))
-        //    {
-        //        var data = await GetData();
-        //        var dataBook = DataBook<BrewPub>.Create(data, 10);
-        //        var dataPages = dataBook.GetDataPages();
-        //        foreach(var page in dataPages.Pages)
-        //        {
-        //            page.PageKeysLookup = dataPages.PageKeysLookup;
-        //            page.KeysPageLookup = dataPages.KeysPageLookup;
-        //            string pageToString = _serialize<DataPage<BrewPub>>(page);
-        //            _db.StringSet(page.PageKey, pageToString);
-        //        }
-        //    }
-
-        //    RedisValue stringData = Ensure.ArgumentNotNull( _db.StringGet(pageId));
-        //    DataPage<BrewPub> requestedPage = _deserialize<DataPage<BrewPub>>(stringData.ToString());
-        //    return requestedPage;
-        //}
+        public async Task<int> RetrieveLastPageFromUser(Guid userId)
+        {
+            return await _getPageForUser(userId);
+        }
     }
 }

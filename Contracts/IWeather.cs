@@ -1,7 +1,12 @@
 ﻿namespace BrewTrack.Contracts
 {
-    public interface IWeather
+    public interface IWeatherForecast
     {
-        string AirTemprature { get; set; }
+        
+    }
+
+    public interface IWeatherTimeEntry
+    {
+
     }
 }

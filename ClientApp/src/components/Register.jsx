@@ -4,10 +4,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import { FcAbout, FcAddressBook, FcCalendar } from "react-icons/fc";
 import _ from "lodash";
-import { FormBuilder } from "./Formbuilder";
+import { FormBuilder } from "./FormBuilder";
 import { getStatusMessage } from "../static";
 
-const formInitValues = {givenName:'',familyName:'',emailAddress:'',dateOfBirth:''}
+const formInitValues = { givenName: '', familyName: '', emailAddress: '', dateOfBirth: '' }
 const restEndpoint = '/api/user';
 
 export function Register(props) {
@@ -17,7 +17,7 @@ export function Register(props) {
 		formSubTitle: 'To view the content of our site it is important for us to know who you are.',
 		gotoIdentityButtonText: 'Back Home'
 	}
-	
+
 	const [params] = useSearchParams();
 	const [registrationStatus, setRegistrationStatus] = useState({ code: null, message: null, bg: null, formSent: false });
 	// Spinner state
@@ -33,8 +33,8 @@ export function Register(props) {
 			navigate(url)
 		}, 2000)
 
-	useEffect(()=>{
-		_.isEmpty(formData.emailAddress) && setFormData(prevFormData => ({...prevFormData, emailAddress: params.get('emailAddress')}))
+	useEffect(() => {
+		_.isEmpty(formData.emailAddress) && setFormData(prevFormData => ({ ...prevFormData, emailAddress: params.get('emailAddress') }))
 	})
 
 	// serialized as string meta data for registration form, 3
@@ -75,18 +75,18 @@ export function Register(props) {
 		}
 
 	// form state
-	const 
+	const
 		[formData, setFormData] = useState(formInitValues),
 		handleChange = (changeEvent) => {
-			const {name, value} = changeEvent.target;
-			setFormData(prevFormData => ({...prevFormData, [name]: value}));
-		} 
+			const { name, value } = changeEvent.target;
+			setFormData(prevFormData => ({ ...prevFormData, [name]: value }));
+		}
 
 	// Form submission event handler
 	function onRegistrationFormSubmit(ev) {
 		ev.preventDefault();
 		showSpinner();
-		postToApi(restEndpoint,formData)
+		postToApi(restEndpoint, formData)
 			.catch(catchApiCallError)
 			.then(handlePostResponse)
 	}
@@ -111,19 +111,19 @@ export function Register(props) {
 				<CardSubtitle>{formSubTitle}</CardSubtitle>
 				<hr />
 				<form onSubmit={onRegistrationFormSubmit} name={formName}>
-					<FormBuilder 
-					formState={formData} 
-					onChange={handleChange} 
-					paramSets={formMetaData} 
-					spinnerState={spinnerHidden || [409,400,500].includes(registrationStatus.code) }
-					buttonDisabled={ registrationStatus.code != null }
-					icons={icons} />
+					<FormBuilder
+						formState={formData}
+						onChange={handleChange}
+						paramSets={formMetaData}
+						spinnerState={spinnerHidden || [409, 400, 500].includes(registrationStatus.code)}
+						buttonDisabled={registrationStatus.code != null}
+						icons={icons} />
 				</form>
 			</CardBody>
 
 			<CardFooter hidden={!Boolean(registrationStatus.code)} className={registrationStatus.bg}>
-				<p className="lead">{registrationStatus.message} <Spinner size="sm" hidden={registrationStatus.code!==201} ></Spinner></p>
-				<Button className={registrationStatus.code==201 ? 'invisible' : 'd-block m-auto'} color="danger"  size="sm" onClick={onGotoEnterEmail}>
+				<p className="lead">{registrationStatus.message} <Spinner size="sm" hidden={registrationStatus.code !== 201} ></Spinner></p>
+				<Button className={registrationStatus.code == 201 ? 'invisible' : 'd-block m-auto'} color="danger" size="sm" onClick={onGotoEnterEmail}>
 					{gotoIdentityButtonText}<Spinner size="sm" hidden={spinnerHidden}></Spinner>
 				</Button>
 			</CardFooter>

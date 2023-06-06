@@ -11,5 +11,6 @@ namespace BrewTrack.Models
         [ForeignKey("UserId")] public Guid UserId { get; set; }
 
         public int LastPage { get; set; }
+        public DateTime RequestDate { get; set; } = DateTime.UtcNow;
     }
 }

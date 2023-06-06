@@ -1,4 +1,47 @@
 .infinite-scroll {
     overflow-x: hidden;
     height: 70vh;
+
+}
+
+.container-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.flex-one {
+    flex: 1;
+}
+
+.text-tiny {
+    font-size: x-small;
+}
+
+.coords {}
+
+.row {
+    --bs-gutter-x: 0;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.74);
+
+    .spinner {
+        position: absolute;
+        font-size: 2em;
+        left: 50%;
+        bottom: 50%;
+        transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+
+    }
 }

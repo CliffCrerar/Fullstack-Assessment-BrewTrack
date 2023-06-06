@@ -20,7 +20,7 @@ export function Home(props) {
 		paragraph: 'Jump right in:',
 		getStartedBtn: 'Get Started!'
 	}
-	const userId = sessionStorage.getItem("userId"); // retrieve item from local storage
+	const userId = localStorage.getItem("userId"); // retrieve item from local storage
 	const hasStarted = localStorage.getItem("hasStarted"); // retrieve item from local storage
 
 	const navigate = useNavigate(); // function used for navigation

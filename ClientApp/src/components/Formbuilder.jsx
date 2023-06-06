@@ -1,4 +1,4 @@
-	// the form builder that consumes the above and turns it into jsx
+// the form builder that consumes the above and turns it into jsx
 
 import React, { useState } from "react";
 import { Button, Input, InputGroup, InputGroupText, Spinner } from "reactstrap";
@@ -8,14 +8,14 @@ import { Button, Input, InputGroup, InputGroupText, Spinner } from "reactstrap";
  * @param {*} param0 
  * @returns 
  */
-export const FormBuilder = ({ paramSets, onChange, formState, spinnerState, icons, buttonDisabled }) => {
+export function FormBuilder({ paramSets, onChange, formState, spinnerState, icons, buttonDisabled }) {
     const [elementFocus, setElementFocus] = useState();
     const onNativeChange = (ev) => {
         ev.preventDefault();
         ev.persist();
         onChange(ev);
     }
-    const onElementFocus= (ev) =>{
+    const onElementFocus = (ev) => {
         setElementFocus(ev.target.name);
     }
     return paramSets.map(([type, name, text, required], idx) => {
@@ -37,7 +37,7 @@ export const FormBuilder = ({ paramSets, onChange, formState, spinnerState, icon
                     <InputGroupText htmlFor={name + type + idx} >{icons[idx]}</InputGroupText>
                     <Input
                         onFocus={onElementFocus}
-                        autoFocus={name===elementFocus}
+                        autoFocus={name === elementFocus}
                         onChange={onNativeChange}
                         id={name + type + idx}
                         type={type}

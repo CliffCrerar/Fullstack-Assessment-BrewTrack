@@ -16,20 +16,19 @@ namespace BrewTrack.Controllers
         {
             _breweriesService = breweriesService;
         }
+
         [HttpGet("breweriesdatafromapi")]
         public async Task<IActionResult> Get()
         {
             var bp = await Breweries.GetData();
-
             var dataBook = new DataBook<BrewPub>(bp, 10);
-
             return Ok(bp);
         }
 
         [HttpGet("brewerydatafromservice")]
         public async Task<IActionResult> GetBrewData()
         {
-            var data = await _breweriesService.GetData();
+            var data = await _breweriesService.GetPageDataForUser(Guid.NewGuid());
             return Ok(data);
         }
     }

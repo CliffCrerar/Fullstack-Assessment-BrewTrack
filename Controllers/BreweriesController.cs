@@ -1,9 +1,6 @@
-﻿using BrewTrack.Services;
-using Microsoft.AspNetCore.Http;
+﻿using BrewTrack.Dto;
+using BrewTrack.Services;
 using Microsoft.AspNetCore.Mvc;
-using StackExchange.Redis;
-using BrewTrack.Dto;
-using BrewTrack.Contracts.IBrewery;
 
 namespace BrewTrack.Controllers
 {
@@ -19,42 +16,42 @@ namespace BrewTrack.Controllers
             _breweriesService = breweriesService;
         }
 
-        [HttpGet]
-        public IActionResult GetBrewDataSet()
-        // public async Task<IActionResult> GetBrewDataSet()
-        {
-            _logger.LogInformation("Get Complete Breweries Data Set");
-            
-            return Ok();
-        }
-
-        [HttpGet("next-page/{userId}")]
-        public async Task<IActionResult> GetBrewDataNextPageForUser(Guid userId) 
-        {
-            var pageData = await _breweriesService.GetNextPageDataForUser(userId);
-            return Ok(pageData);
-        }
-
-        [HttpGet("prev-page/{userId}")]
-        public async Task<IActionResult> GetBrewDataPrevPageForUser(Guid userId)
-        {
-            var pageData = await _breweriesService.GetPrevPageDataForUser(userId);
-            return Ok(pageData);
-        }
-
         [HttpGet("current/{userId}")]
         [ProducesDefaultResponseType(typeof(BreweriesCurrentUserStateDto))]
         public async Task<IActionResult> GetBrewDataPageForUser(Guid userId)
         {
-            var pageData = await _breweriesService.GetPageDataForUser(userId);
-            int lastPageFromUser = await _breweriesService.RetrieveLastPageFromUser(userId);
-            int totalPages = (await _breweriesService.GetBreweriesMeta()).Total / 10;
-            return Ok(new BreweriesCurrentUserStateDto
-            {
-                Data = pageData,
-                LastVisitedPage = lastPageFromUser,
-                TotalPages = totalPages
-            });
+            _logger.LogInformation("Get breweries current data page for user");
+            BreweriesCurrentUserStateDto response = await _breweriesService.GetPageDataForUser(userId);
+            return Ok(response);
         }
+
+        [HttpGet("next-page/{userId}")]
+        [ProducesDefaultResponseType(typeof(BreweriesCurrentUserStateDto))]
+        public async Task<IActionResult> GetBrewDataNextPageForUser(Guid userId)
+        {
+            _logger.LogInformation("Get breweries data next page for user");
+            BreweriesCurrentUserStateDto response = await _breweriesService.GetNextPageDataForUser(userId);
+            return Ok(response);
+        }
+
+        [HttpGet("prev-page/{userId}")]
+        [ProducesDefaultResponseType(typeof(BreweriesCurrentUserStateDto))]
+        public async Task<IActionResult> GetBrewDataPrevPageForUser(Guid userId)
+        {
+            _logger.LogInformation("Get breweries data previous page for user");
+            BreweriesCurrentUserStateDto response = await _breweriesService.GetPrevPageDataForUser(userId);
+            return Ok(response);
+        }
+
+        [HttpGet("select-page/{userId}/page-no/{page}")]
+        [ProducesDefaultResponseType(typeof(BreweriesCurrentUserStateDto))]
+        public async Task<IActionResult> GetBrewDataPrevPageForUser(Guid userId, int pageNo)
+        {
+            _logger.LogInformation("Get breweries data for selected page");
+            BreweriesCurrentUserStateDto response = await _breweriesService.GetDataForPage(userId, pageNo);
+            return Ok(response);
+        }
+
+
     }
 }
