@@ -7,7 +7,7 @@ public class BrewTrackContstants
 
     public const int RecordsPerPage = 10;
 
-    public const string WeatherSourceKey = "SourceKey";
+    public const string WeatherSourceKey = "Weather";
 
     public const string WeatherApiResource = "https://api.stormglass.io/v2/weather/point";
 }

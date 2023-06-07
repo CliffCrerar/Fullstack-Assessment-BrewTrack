@@ -4,7 +4,15 @@ import { CiCircleInfo } from 'react-icons/ci';
 import { TiWeatherSunny } from 'react-icons/ti';
 
 export function WeatherWidget({ displayState, weatherData }) {
-
+    const { clickMessage, errorHeader, errorMessage, loadingMessage, weatherCardHeader, weatherCardSubTitle, weatherCardTitle } = {
+        clickMessage: "Click a brewery to see the weather",
+        loadingMessage: "Loading weather. . .",
+        weatherCardHeader: "Weather Forecast",
+        weatherCardTitle: 'Card Body',
+        weatherCardSubTitle: 'Card SubTitle',
+        errorHeader: 'An error has occurred',
+        errorMessage: ''
+    }
 
 
 
@@ -12,42 +20,50 @@ export function WeatherWidget({ displayState, weatherData }) {
         default: return (
             <Card className="h-100 d-flex justify-content-center align-items-center">
                 <div>
-                    <div className="lead">Click a brewery to see the weather</div>
+                    <div className="lead">{clickMessage}</div>
                     <div className="display-6 text-center"><CiCircleInfo /></div>
                 </div>
             </Card>)
         case "loading": {
-            return <div><Spinner></Spinner></div>
+            return (
+                <div className="h-100 d-flex justify-content-center align-items-center ">
+                    <div>
+                        <Spinner></Spinner>
+                        <h6 className="lead">{loadingMessage}</h6>
+                    </div>
+                </div>
+            )
         };
         case "hasLoaded": return (
-            <>
-                <Card className="h-100">
-                    <CardHeader>
-                        <h3>Weather Forecast<TiWeatherSunny /></h3>
-                    </CardHeader>
-                    <CardBody className="h-100">
+            <Card className="h-100">
+                <CardHeader>
+                    <h3>{weatherCardHeader}<TiWeatherSunny /></h3>
+                </CardHeader>
+                <CardBody className="h-100 d-flex flex-column">
 
-                        <CardTitle><h4>Card Body</h4></CardTitle>
-                        <CardSubtitle>Card SubTitle</CardSubtitle>
-                        <div style={{ overflow: 'scroll', heigth: '100%' }}>
-                            <div className="list-group">
-                                {
-                                    weatherData.hours.map(record =>
-                                        <ListGroupItem className="d-flex justify-content-between">
-                                            <span>{record.time.replace(/ /g, "")}</span>  <div className="flex-end">{record.airTemperature.noaa} degrees C</div>
-                                        </ListGroupItem>)
-                                }
+                    <CardTitle><h4>{weatherCardTitle}</h4></CardTitle>
+                    <CardSubtitle>{weatherCardSubTitle}</CardSubtitle>
 
-                            </div>
+                    <div style={{ overflow: 'scroll', heigth: '100%', flex: 1 }}>
+                        <div className="list-group">
+                            {
+                                weatherData.hours.map(record =>
+                                    <ListGroupItem className="d-flex justify-content-between">
+                                        <span>{record.time.replace(/ /g, "")}</span>  <div className="flex-end">{record.airTemperature.noaa} degrees C</div>
+                                    </ListGroupItem>)
+                            }
+
                         </div>
-                    </CardBody>
-                </Card>
-            </>
+                    </div>
+                </CardBody>
+            </Card>
         );
-        case "error": return <div>
-            <h4>An Error has occurred.</h4>
-            <p className="lead"></p>
-        </div>
+        case "error": return (
+            <div>
+                <h4>{errorHeader}</h4>
+                <p className="lead">{errorMessage}</p>
+            </div>
+        )
 
     }
 }

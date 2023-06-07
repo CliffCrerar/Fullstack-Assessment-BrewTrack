@@ -34,7 +34,7 @@ public class BrewTrackDbContext : DbContext
         modelBuilder.Entity<ApiSource>().HasData(
             new ApiSource
             {
-                ApiSourceName = "Weather",
+                ApiSourceName = BrewTrackContstants.WeatherSourceKey,
             },
             new ApiSource
             {

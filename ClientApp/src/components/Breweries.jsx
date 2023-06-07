@@ -110,13 +110,11 @@ export function Breweries(props) {
 												</div>
 											</div>
 											<ListGroup>
-
 												{pageState.pageData.map(({ id, brewery_Type, city, latitude, longitude, name, phone, website_Url }, idx) => {
 													return (
 														<ListGroupItem key={idx} className="border-start mw-100 col-md" aria-current="true">
 															<div className="d-flex w-100 justify-content-between">
 																<h5 className="mb-1">{name}</h5>
-
 																<small className="flex-one text-end">
 																	<a className="" href={website_Url} target="_blank">See website  <FaExternalLinkAlt /></a>
 																</small>
@@ -124,12 +122,6 @@ export function Breweries(props) {
 															<div className="d-flex w-100 justify-content-between">
 																<p className="mb-1 flex-one"><FaCity />: {city}</p>
 
-																{/*<div className="flex-one text-center" hidden={longitude == null}>
-																<button className="btn-primary btn btn-sm" href={locationLink(longitude, latitude)} hidden={longitude == null} target="_blank">
-																	<MdLocationOn className="mb-1" />
-																	View location
-																</button>
-															</div> */}
 																<small hidden={latitude != null} >
 																	<MdLocationOff className="mb-1" />No location info
 																</small>
@@ -168,12 +160,8 @@ export function Breweries(props) {
 
 								</div>
 							</div>
-
-
 						</>
 				}
-
-
 			</div >
 		</>
 	)
