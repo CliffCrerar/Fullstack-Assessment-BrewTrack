@@ -57,7 +57,8 @@ namespace BrewTrack.Migrations
                     UserHistoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false),
-                    LastPage = table.Column<int>(type: "int", nullable: false)
+                    LastPage = table.Column<int>(type: "int", nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -82,16 +83,32 @@ namespace BrewTrack.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "weather_forcast_header",
+                columns: table => new
+                {
+                    WeatherForecastHeaderId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Longitude = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Latitude = table.Column<string>(type: "varchar(255)", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CachedTimeLineId = table.Column<Guid>(type: "char(36)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_weather_forcast_header", x => x.WeatherForecastHeaderId);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "cached_timeline",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    CachedTimeLineId = table.Column<Guid>(type: "char(36)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     ApiSourceRefId = table.Column<Guid>(type: "char(36)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_cached_timeline", x => x.Id);
+                    table.PrimaryKey("PK_cached_timeline", x => x.CachedTimeLineId);
                     table.ForeignKey(
                         name: "FK_cached_timeline_api_sources_ApiSourceRefId",
                         column: x => x.ApiSourceRefId,
@@ -101,13 +118,34 @@ namespace BrewTrack.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "weather_forecast_details",
+                columns: table => new
+                {
+                    WeatherForeCastDetailsId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    AirTemprature = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    WeatherForCastHeaderId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    WeatherForeCastHeaderId = table.Column<Guid>(type: "char(36)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_weather_forecast_details", x => x.WeatherForeCastDetailsId);
+                    table.ForeignKey(
+                        name: "FK_weather_forecast_details_weather_forcast_header_WeatherForeC~",
+                        column: x => x.WeatherForeCastHeaderId,
+                        principalTable: "weather_forcast_header",
+                        principalColumn: "WeatherForecastHeaderId");
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.InsertData(
                 table: "api_sources",
                 columns: new[] { "ApiSourceId", "ApiSourceName", "DateCreated" },
                 values: new object[,]
                 {
-                    { new Guid("961356b3-e822-4824-8c2d-95467492de4d"), "Breweries", new DateTime(2023, 6, 4, 16, 54, 27, 866, DateTimeKind.Utc).AddTicks(3703) },
-                    { new Guid("b897ceee-c082-4522-bbb7-18dc95105bea"), "Weather", new DateTime(2023, 6, 4, 16, 54, 27, 866, DateTimeKind.Utc).AddTicks(3700) }
+                    { new Guid("340e1ee2-3171-4f09-b06f-408e6fa149ca"), "Breweries", new DateTime(2023, 6, 7, 14, 5, 41, 60, DateTimeKind.Utc).AddTicks(8127) },
+                    { new Guid("cf63956f-f675-4121-a6f8-26dfb40bd750"), "Weather", new DateTime(2023, 6, 7, 14, 5, 41, 60, DateTimeKind.Utc).AddTicks(8118) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -126,6 +164,17 @@ namespace BrewTrack.Migrations
                 table: "users",
                 column: "EmailAddress",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_weather_forcast_header_Latitude_Longitude",
+                table: "weather_forcast_header",
+                columns: new[] { "Latitude", "Longitude" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_weather_forecast_details_WeatherForeCastHeaderId",
+                table: "weather_forecast_details",
+                column: "WeatherForeCastHeaderId");
         }
 
         /// <inheritdoc />
@@ -144,7 +193,13 @@ namespace BrewTrack.Migrations
                 name: "users");
 
             migrationBuilder.DropTable(
+                name: "weather_forecast_details");
+
+            migrationBuilder.DropTable(
                 name: "api_sources");
+
+            migrationBuilder.DropTable(
+                name: "weather_forcast_header");
         }
     }
 }

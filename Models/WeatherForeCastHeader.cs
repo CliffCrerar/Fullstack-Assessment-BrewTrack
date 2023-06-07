@@ -12,6 +12,8 @@ namespace BrewTrack.Models
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+        [ForeignKey("CachedTimeLineId")] public Guid CachedTimeLineId { get; set; }
         public List<WeatherForeCastDetails> WeatherForeCastDetails { get; set; } = new List<WeatherForeCastDetails>();
+        
     }
 }

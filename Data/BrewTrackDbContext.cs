@@ -48,4 +48,6 @@ public class BrewTrackDbContext : DbContext
     public DbSet<BrewPub> Brewpubs => Set<BrewPub>();
     public DbSet<ApiSource> ApiSources => Set<ApiSource>();
     public DbSet<CachedTimeline> CachedTimeline => Set<CachedTimeline>();
+    public DbSet<WeatherForeCastHeader> WeatherForeCastHeaders => Set<WeatherForeCastHeader>();
+    public DbSet<WeatherForeCastDetails> WeatherForeCastDetails => Set<WeatherForeCastDetails>();
 }

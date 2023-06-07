@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrewTrack.Migrations
 {
     [DbContext(typeof(BrewTrackDbContext))]
-    [Migration("20230606121007_Second")]
-    partial class Second
+    [Migration("20230607140541_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,15 +43,15 @@ namespace BrewTrack.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("3e95d8d8-3717-49a8-8918-6b272d409060"),
+                            Id = new Guid("cf63956f-f675-4121-a6f8-26dfb40bd750"),
                             ApiSourceName = "Weather",
-                            DateCreated = new DateTime(2023, 6, 6, 12, 10, 7, 677, DateTimeKind.Utc).AddTicks(3244)
+                            DateCreated = new DateTime(2023, 6, 7, 14, 5, 41, 60, DateTimeKind.Utc).AddTicks(8118)
                         },
                         new
                         {
-                            Id = new Guid("c66efa9d-b675-4eb8-b631-7061e62d3df5"),
+                            Id = new Guid("340e1ee2-3171-4f09-b06f-408e6fa149ca"),
                             ApiSourceName = "Breweries",
-                            DateCreated = new DateTime(2023, 6, 6, 12, 10, 7, 677, DateTimeKind.Utc).AddTicks(3248)
+                            DateCreated = new DateTime(2023, 6, 7, 14, 5, 41, 60, DateTimeKind.Utc).AddTicks(8127)
                         });
                 });
 
@@ -93,7 +93,8 @@ namespace BrewTrack.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasColumnName("CachedTimeLineId");
 
                     b.Property<Guid>("ApiSourceRefId")
                         .HasColumnType("char(36)");
@@ -162,6 +163,61 @@ namespace BrewTrack.Migrations
                     b.ToTable("user_history");
                 });
 
+            modelBuilder.Entity("BrewTrack.Models.WeatherForeCastDetails", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("WeatherForeCastDetailsId");
+
+                    b.Property<int>("AirTemprature")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("WeatherForCastHeaderId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("WeatherForeCastHeaderId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WeatherForeCastHeaderId");
+
+                    b.ToTable("weather_forecast_details");
+                });
+
+            modelBuilder.Entity("BrewTrack.Models.WeatherForeCastHeader", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("WeatherForecastHeaderId");
+
+                    b.Property<Guid>("CachedTimeLineId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Latitude")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Longitude")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Latitude", "Longitude")
+                        .IsUnique();
+
+                    b.ToTable("weather_forcast_header");
+                });
+
             modelBuilder.Entity("BrewTrack.Models.CachedTimeline", b =>
                 {
                     b.HasOne("BrewTrack.Models.ApiSource", null)
@@ -171,9 +227,21 @@ namespace BrewTrack.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("BrewTrack.Models.WeatherForeCastDetails", b =>
+                {
+                    b.HasOne("BrewTrack.Models.WeatherForeCastHeader", null)
+                        .WithMany("WeatherForeCastDetails")
+                        .HasForeignKey("WeatherForeCastHeaderId");
+                });
+
             modelBuilder.Entity("BrewTrack.Models.ApiSource", b =>
                 {
                     b.Navigation("Timeline");
+                });
+
+            modelBuilder.Entity("BrewTrack.Models.WeatherForeCastHeader", b =>
+                {
+                    b.Navigation("WeatherForeCastDetails");
                 });
 #pragma warning restore 612, 618
         }

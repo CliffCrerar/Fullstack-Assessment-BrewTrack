@@ -7,7 +7,7 @@ namespace BrewTrack.Models
     [Table("cached_timeline"), Index(nameof(Date), IsDescending = new [] { true })]
     public class CachedTimeline
     {
-        [Key]
+        [Key, Column("CachedTimeLineId")]
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime Date {get;set;}
         [Required]
