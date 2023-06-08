@@ -66,35 +66,35 @@ export function WeatherWidget({ displayState, weatherData, cardTitle, cardSubtit
                                     const max = _.minBy(record.temperatures, o => o.airTemperature);
                                     return (
                                         <ListGroupItem key={idx} className="d-flex justify-content-between">
-                                            <div style={{ flex: 2 }}>
+                                            <div style={{ flex: 2 }} >
                                                 
-                                                <h5><FcCalendar />{formatDate(record.fullDate)}</h5>
+                                                <h5><FcCalendar style={{fontSize: '1.3em'}} /><span className="ms-1">{formatDate(record.fullDate)}</span></h5>
                                                 
-                                                <hr></hr>
+                                                <hr className="my-1"></hr>
                                                 <div className="text-center">
                                                 {
                                                     record.averageTemperature < 25
                                                         ? <h2 className="text-primary display-6">
                                                             <FaThermometerHalf />{Math.floor(record.averageTemperature)}&deg;C
                                                         </h2>
-                                                        : <h2 className="text-success">
+                                                        : <h2 className="text-success display-6">
                                                             <FaThermometerThreeQuarters />{Math.floor(record.averageTemperature)}&deg;C
                                                         </h2>
                                                 }
                                                     <small style={{color: "light-gray"}}>AVG Temp for the day</small>
                                                 </div>
                                             </div>
-                                            <div style={{ flex: 4 }}>
+                                            <div className="border-start ps-1" style={{ flex: 4 }}>
                                                 <p>Air Temperature during. &deg;C/h</p>
                                                 <div>
                                                     <AreaChartWidget dayTemperatures={record.temperatures} />
                                                 </div>
                                             </div>
-                                            <div style={{ flex: 1 }}>
-                                                Min/Max:
+                                            <div style={{ flex: 1.3 }} className="border-start">
+                                                <span className="ps-1">Min/Max:</span>
                                                 <hr></hr>
-                                                <h6 className="text-success"> {max.airTemperature}&deg;C<TbTemperaturePlus /></h6>
-                                                <h6 className="text-primary"> {min.airTemperature}&deg;C<TbTemperatureMinus /></h6>
+                                                <h6 className="text-success ps-1"> {max.airTemperature}&deg;C<TbTemperaturePlus /></h6>
+                                                <h6 className="text-primary ps-1"> {min.airTemperature}&deg;C<TbTemperatureMinus /></h6>
                                             </div>
                                         </ListGroupItem>
                                     )
