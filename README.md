@@ -48,7 +48,7 @@ To configure the application with its required infrastructure please create a `a
 
 ## Data Migrations
 
-Finally migrate the database by running `dotnet ef database update` if you have the `dotnet-ef cli` installed.
+The data migrations are executed when the application starts and will bring any connected MySQL database up to speed if the database stipulated in the connection string has been created in a instance of MySQL.
 
 ## Run the app
 
