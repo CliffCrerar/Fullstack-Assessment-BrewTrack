@@ -7,9 +7,9 @@ namespace BrewTrack.Services
         public static IServiceCollection AddBrewTrackService(this IServiceCollection services, IConfiguration config) {
 
             return services
-                .AddWeatherService(config)
                 .AddBreweriesService(config)
-                .AddUserService();
+                .AddUserService()
+                .AddWeatherService(config);
         }
     }
 }

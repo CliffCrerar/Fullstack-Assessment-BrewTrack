@@ -8,7 +8,7 @@ import { Button, Input, InputGroup, InputGroupText, Spinner } from "reactstrap";
  * @param {*} param0 
  * @returns 
  */
-export function FormBuilder({ paramSets, onChange, formState, spinnerState, icons, buttonDisabled }) {
+export function FormBuilderWidget({ paramSets, onChange, formState, spinnerState, icons, buttonDisabled }) {
     const [elementFocus, setElementFocus] = useState();
     const onNativeChange = (ev) => {
         ev.preventDefault();

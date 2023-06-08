@@ -23,7 +23,7 @@ services.AddDbContext<BrewTrackDbContext>(options => options.UseMySQL(mySqlConne
 services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>(options =>
 {
     // using StackExchange.Redis;
-    return ConnectionMultiplexer.Connect(redisConnectionString);
+    return ConnectionMultiplexer.Connect(redisConnectionString);    
 });
 services.AddBrewTrackService(configuration);
 services.AddEndpointsApiExplorer();

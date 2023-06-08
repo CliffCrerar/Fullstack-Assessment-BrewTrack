@@ -1,4 +1,5 @@
 ﻿using BrewTrack.Data;
+using BrewTrack.Helpers;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
@@ -7,21 +8,30 @@ namespace BrewTrack.DataContext
 
     public static class MigrationManager
     {
-        private static string _connectionString;
+        private static string? _connectionString;
         private static bool _testDatabaseConnection()
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
-                bool canConnect;
-                connection.Open();
-                canConnect = connection.Ping();
-                connection.CloseAsync();
-                return canConnect;
+                try
+                {
+                    bool canConnect;
+                    connection.Open();
+                    canConnect = connection.Ping();
+                    connection.CloseAsync();
+                    return canConnect;
+                } catch(Exception ex)
+                {
+                    Console.WriteLine("ERROR!! Cannot connect to database");
+                    Console.Error.WriteLine(ex.Message);
+                    return false;
+                }
+
             }
         }
         public static WebApplication MigrateDatabase(this WebApplication webApp)
         {
-            _connectionString = webApp.Configuration.GetConnectionString("MySql");
+            _connectionString = Ensure.ArgumentNotNull(webApp.Configuration.GetConnectionString("MySql"));
             using (var loggerFac = new LoggerFactory())
             {
                 var logger = loggerFac.CreateLogger("Migrations Manager");
@@ -45,8 +55,8 @@ namespace BrewTrack.DataContext
                         {
                             //Log errors or do anything you think it's needed
                             logger.LogError(">--> !!!!! MIGRATIONS ERROR!!!!! <--<");
-                            Console.Error.WriteLine(ex);
-                            throw;
+                            Console.Error.WriteLine(ex.Message);
+                            // throw;
                         }
                     }
                 }

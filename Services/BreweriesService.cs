@@ -176,7 +176,7 @@ namespace BrewTrack.Services
 
         private bool _isBreweriesDataInCache => _db.KeyExists(BrewTrackContstants.BreweryApiResource);
 
-        private async void _updateUserPage(int pageNo, Guid userId)
+        private async Task _updateUserPage(int pageNo, Guid userId)
         {
             try
             {
@@ -274,13 +274,13 @@ namespace BrewTrack.Services
         public async Task<BreweriesCurrentUserStateDto> GetNextPageDataForUser(Guid userId)
         {
             int currentPage = await _getPageForUser(userId);
-            _updateUserPage(++currentPage, userId);
+            await _updateUserPage(++currentPage, userId);
             return await _createPageResponse(currentPage);
         }
         public async Task<BreweriesCurrentUserStateDto> GetPrevPageDataForUser(Guid userId)
         {
             int currentPage = await _getPageForUser(userId);
-            _updateUserPage(--currentPage, userId);
+            await _updateUserPage(--currentPage == 0 ? 1 : currentPage, userId);
             return await _createPageResponse(currentPage);
         }
         public async Task<BreweriesCurrentUserStateDto> GetPageDataForUser(Guid userId)
@@ -291,7 +291,7 @@ namespace BrewTrack.Services
 
         public async Task<BreweriesCurrentUserStateDto> GetDataForPage(Guid userId, int pageNo)
         {
-            _updateUserPage(pageNo, userId);
+            await _updateUserPage(pageNo, userId);
             return await _createPageResponse(pageNo);
         }
 

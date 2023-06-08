@@ -1,4 +1,6 @@
-﻿using BrewTrack.Infra;
+﻿using BrewTrack.Dto;
+using BrewTrack.Infra;
+using BrewTrack.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,17 +11,18 @@ namespace BrewTrack.Controllers
     public class WeatherController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public WeatherController(IConfiguration config) 
+        private readonly IWeatherService _weatherService;
+        public WeatherController(IConfiguration config, IWeatherService weatherService) 
         {
             _configuration = config;
+            _weatherService = weatherService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string longitude, [FromQuery] string latitude)
         {
-            string config = _configuration.GetValue<string>("WeatherApiKey");
-            var weatherApi = new Weather(config);
-            return Ok(await weatherApi.GetWeatherForLocation(latitude, longitude));
+            TransformedWeatherDto weatherForecast = await _weatherService.GetWeatherForecast(longitude, latitude);
+            return Ok(weatherForecast);
         }
     }
 }

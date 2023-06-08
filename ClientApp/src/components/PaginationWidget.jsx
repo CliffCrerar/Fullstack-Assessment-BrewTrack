@@ -29,7 +29,7 @@ export function PaginationWidget({ onSelectedPage, onNextPage, onPrevPage, curre
         <nav aria-label="Page navigation example">
             <ul className="pagination">
                 <li className="page-item">
-                    <button id="prevPage" onClick={onPrevPage} className="page-link" href="#" aria-label="Previous">
+                    <button disabled={currentPage === 1} style={{}} id="prevPage" onClick={onPrevPage} className={currentPage === 1 ? "page-link disabled" : "page-link"}  aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </button>
                 </li>

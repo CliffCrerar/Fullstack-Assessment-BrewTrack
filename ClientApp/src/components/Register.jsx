@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import { FcAbout, FcAddressBook, FcCalendar } from "react-icons/fc";
 import _ from "lodash";
-import { FormBuilder } from "./FormBuilder";
+import { FormBuilderWidget } from "./";
 import { getStatusMessage } from "../static";
 
 const formInitValues = { givenName: '', familyName: '', emailAddress: '', dateOfBirth: '' }
@@ -111,7 +111,7 @@ export function Register(props) {
 				<CardSubtitle>{formSubTitle}</CardSubtitle>
 				<hr />
 				<form onSubmit={onRegistrationFormSubmit} name={formName}>
-					<FormBuilder
+					<FormBuilderWidget
 						formState={formData}
 						onChange={handleChange}
 						paramSets={formMetaData}
