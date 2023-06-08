@@ -29,12 +29,12 @@ namespace BrewTrack.Infra
             
             using(var client = new HttpClient())
             {
-                // HttpResponseMessage response = await client.SendAsync(req);
-                // var responseBody = await response.Content.ReadFromJsonAsync<WeatherForeCastApiRequestDto>();
+                 HttpResponseMessage response = await client.SendAsync(req);
+                 var responseBody = await response.Content.ReadFromJsonAsync<WeatherForeCastApiRequestDto>();
 
                 // temp code for testing
-                var tempUrl = "https://gist.githubusercontent.com/CliffCrerar/569b66b170ddf9fbce57a1908445c82e/raw/8f276a10c1757f2fec0a1ec110248c37cb0c7d98/weather";
-                var responseBody =  Ensure.ArgumentNotNull(await client.GetFromJsonAsync<WeatherForeCastApiRequestDto>(tempUrl));
+                //var tempUrl = "https://gist.githubusercontent.com/CliffCrerar/569b66b170ddf9fbce57a1908445c82e/raw/8f276a10c1757f2fec0a1ec110248c37cb0c7d98/weather";
+                //var responseBody =  Ensure.ArgumentNotNull(await client.GetFromJsonAsync<WeatherForeCastApiRequestDto>(tempUrl));
                 // temp code for testing
 
                 return responseBody;

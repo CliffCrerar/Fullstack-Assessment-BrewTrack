@@ -5,10 +5,10 @@ import { Area, AreaChart, CartesianGrid, Legend, Line, LineChart, ResponsiveCont
 export function AreaChartWidget({ dayTemperatures }) {
     return (
         <>
-        <ResponsiveContainer width="100%" height="100%" minWidth={250} minHeight={100}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
             <AreaChart
-                width={250}
-                height={100}
+                width={200}
+                height={50}
                 data={dayTemperatures}
                 margin={{
                     top: 0, right: 30, bottom: 0, left: -30,

@@ -3,7 +3,7 @@
     public class WeatherForeCastApiRequestDto
     {
         public IList<WeatherForeCastEntry> Hours { get; set; }
-        public WeatherForecastMeta Meta { get; set; }
+        public WeatherForecastPageMeta Meta { get; set; }
     }
 
     public class WeatherForeCastEntry
@@ -18,7 +18,7 @@
         public decimal Noaa { get; set; }
     }
 
-    public class WeatherForecastMeta
+    public class WeatherForecastPageMeta
     {
         public int Cost { get; set; }
         public int DailyQuota { get; set; }

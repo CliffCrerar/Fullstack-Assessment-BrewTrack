@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './NavMenu.scss';
+import {GiBeerHorn} from 'react-icons/gi'
 
 export function NavMenu(props) {
 
@@ -22,10 +23,10 @@ export function NavMenu(props) {
 				<NavItem>
 					<NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
 				</NavItem>
-				{/* <NavItem>
-					<NavLink tag={Link} className="text-dark" to="/counter">Counter</NavLink>
+				 <NavItem>
+					<NavLink tag={Link} className="text-dark" to="/about">About</NavLink>
 				</NavItem>
-				<NavItem>
+				{/*<NavItem>
 					<NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
 				</NavItem> */}
 			</ul>
@@ -36,7 +37,7 @@ export function NavMenu(props) {
 		<>
 			<header>
 				<Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
-					<NavbarBrand tag={Link} to="/">{displayName}</NavbarBrand>
+					<NavbarBrand tag={Link} to="/"><GiBeerHorn style={{fontSize: '2em'}}/>{displayName}</NavbarBrand>
 					<NavbarToggler onClick={toggleOffCanvas} className="mr-2 btn" ></NavbarToggler>
 					<Collapse isOpen={toggleState.open}>
 						<NavLinks />

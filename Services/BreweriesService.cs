@@ -61,10 +61,7 @@ namespace BrewTrack.Services
             _recordsPerPage = BrewTrackContstants.RecordsPerPage;
             _db = _redis.GetDatabase();
         }
-        /// <summary>
-        /// Get the last date data was cached in the database or if not data is cashed update the cache register
-        /// </summary>
-        /// <returns></returns>
+        // get cache date
         private DateTime _getCacheDate()
         {
             try
@@ -83,76 +80,21 @@ namespace BrewTrack.Services
                 return DateTime.MinValue;
             }
         }
-        /// <summary>
-        /// Not used
-        /// </summary>
-        private void _getBreweriesData()
-        {
-            if (!_db.KeyExists("Breweries"))
-            {
-                var data = Breweries.GetData().Result;
-                IDatabase db = _redis.GetDatabase();
-                db.StringSet("Breweries", JsonSerializer.Serialize(data));
-            }
-        }
-        /// <summary>
-        /// Get data from third party api integration
-        /// </summary>
-        /// <returns>IList<BrewPub></returns>
+        // get data from external api
         private async Task<IList<BrewPub>> _brewPubApi()
         {
             return await Breweries.GetData();
         }
-        /// <summary>
-        /// Runs a check to test of the cache is stale
-        /// </summary>
-        /// <returns>bool</returns>
+        // check if cache is stale
         private bool _isCacheStale()
         {
             return _cacheDate.AddHours(1) < DateTime.UtcNow;
         }
-
-        private void _updateCacheRegister()
-        {
-            try
-            {
-                var breweriesSoureNameId = from brewery in _dbContext.ApiSources
-                                           where brewery.ApiSourceName == BrewTrackContstants.BrewerySourceKey
-                                           select brewery.Id;
-                var record = new CachedTimeline
-                {
-                    ApiSourceRefId = breweriesSoureNameId.First(),
-                    Date = DateTime.UtcNow
-                };
-                _dbContext.CachedTimeline.Add(record);
-                _dbContext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Serialization short hand method
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        // serialize shorthand
         private string _serialize<T>(T data) => JsonSerializer.Serialize<T>(data);
-        /// <summary>
-        /// Deserialization short hand method
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        // deserialize shorthand
         private T _deserialize<T>(string data) => Ensure.ArgumentNotNull(JsonSerializer.Deserialize<T>(data));
-        /// <summary>
-        /// Store api data in redis cahce
-        /// </summary>
-        /// <param name="breweriesData"></param>
-        /// <returns></returns>
+
         private bool _storeApiDataInCache(IList<BrewPub> breweriesData)
         {
             try

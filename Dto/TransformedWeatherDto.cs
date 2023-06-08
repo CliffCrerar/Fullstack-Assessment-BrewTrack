@@ -1,26 +1,18 @@
 ﻿using System;
+using BrewTrack.Models;
+
 namespace BrewTrack.Dto
 {
 	public class TransformedWeatherDto
 	{
-        public IList<TemperaturesPerDay> TemperaturesPerDays { get; set; } = new List<TemperaturesPerDay>();
-        public WeatherForecastMeta Meta { get; set; }
+        public IList<WeatherForecastDay> TemperaturesPerDays { get; set; } = new List<WeatherForecastDay>();
+        public WeatherForecastPageMeta? Meta { get; set; }
     }
 
-	public class TemperaturesPerDay
-	{
-        public int Day { get; set; }
-        public DateTime FullDate { get; set; }
-        public decimal AverageTemperature { get; set; }
-        public IList<TemperaturePerHour> Temperatures { get; set; } = new List<TemperaturePerHour>();
-    }
-
-    public class TemperaturePerHour
+    public class WeatherForecastHttpResponse: TransformedWeatherDto
     {
-        public int Hour { get; set; }
-        public TimeSpan Time { get; set; }
-        public DateTime FullDate { get; set; }
-        public decimal AirTemperature { get; set; }
+        public new WeatherForcastMeta Meta { get; set; }
     }
+
 }
 

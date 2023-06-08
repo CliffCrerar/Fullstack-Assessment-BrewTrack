@@ -1,4 +1,4 @@
-import { Breweries, Counter, FetchData, Home, Identity, Register } from './components'
+import { About, Breweries, Home, Identity, Register } from './components'
 
 const AppRoutes = [
 	{
@@ -13,17 +13,13 @@ const AppRoutes = [
 		path: '/register',
 		element: <Register />
 	},
-	// {
-	// 	path: '/counter',
-	// 	element: <Counter />
-	// },
-	// {
-	// 	path: '/fetch-data',
-	// 	element: <FetchData />
-	// },
 	{
 		path: '/breweries',
 		element: <Breweries />
+	},
+	{
+		path: '/about',
+		element: <About/>
 	}
 ];
 

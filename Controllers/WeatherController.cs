@@ -21,7 +21,7 @@ namespace BrewTrack.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string longitude, [FromQuery] string latitude)
         {
-            TransformedWeatherDto weatherForecast = await _weatherService.GetWeatherForecast(longitude, latitude);
+            TransformedWeatherDto weatherForecast = await _weatherService.GetWeatherForecast(latitude, longitude);
             return Ok(weatherForecast);
         }
     }
