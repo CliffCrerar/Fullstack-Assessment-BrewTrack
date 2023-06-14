@@ -73,7 +73,7 @@ export function Identity() {
         if (res.status === 200) {
             const body = await res.json();
             console.log("🚀 ~ file: Identity.jsx:70 ~ checkEmail ~ body:", body)
-            sessionStorage.setItem("userId", body.id);
+            localStorage.setItem("userId", body.id);
             return true;
         } else if (res.status === 404) {
             return false;
