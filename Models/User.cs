@@ -1,17 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BrewTrack.Contracts.IUser;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BrewTrack.Models
 {
-    [Table("users")]
-    public class User
+    [Table("users"), Index( "EmailAddress", IsUnique = true )]
+    public class User: IUser
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key, Column("UserId")]
-        public int Id { get; set; }
+        [Key, Column("UserId")]
+        public Guid Id { get; set; } = Guid.NewGuid();
         [EmailAddress]
-        public string EmailAddress { get; set; }
-        public string GivenName { get; set; }
-        public string FamilyName { get; set; }
+        public string EmailAddress { get; set; } = string.Empty;
+        public string GivenName { get; set; } = string.Empty;
+        public string FamilyName { get; set; } = string.Empty;
         public DateTime DateOfBirth { get; set; }
     }
 }

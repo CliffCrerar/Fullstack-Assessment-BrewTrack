@@ -1,4 +1,7 @@
-﻿using BrewTrack.Infra;
+﻿using BrewTrack.Helpers;
+using BrewTrack.Infra;
+using BrewTrack.Models;
+using BrewTrack.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,12 +11,25 @@ namespace BrewTrack.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get()
+        private IBreweriesService _breweriesService;
+        public TestController(IBreweriesService breweriesService)
         {
-            var bp = new Breweries();
-            bp.GetData();
-            return Ok();
+            _breweriesService = breweriesService;
+        }
+
+        [HttpGet("breweriesdatafromapi")]
+        public async Task<IActionResult> Get()
+        {
+            var bp = await Breweries.GetData();
+            var dataBook = new DataBook<BrewPub>(bp, 10);
+            return Ok(bp);
+        }
+
+        [HttpGet("brewerydatafromservice")]
+        public async Task<IActionResult> GetBrewData()
+        {
+            var data = await _breweriesService.GetPageDataForUser(Guid.NewGuid());
+            return Ok(data);
         }
     }
 }

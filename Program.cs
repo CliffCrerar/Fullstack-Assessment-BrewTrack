@@ -1,21 +1,37 @@
 using BrewTrack.Data;
+using BrewTrack.DataContext;
+using BrewTrack.Helpers;
 using BrewTrack.Services;
 using Microsoft.EntityFrameworkCore;
-// using StackExchange.Redis;
+using StackExchange.Redis;
 
-var builder = WebApplication.CreateBuilder(args);
-var services = builder.Services;
-var configuration = builder.Configuration;
+// Top Level Program Variables
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+IServiceCollection services = builder.Services;
+IConfiguration configuration = builder.Configuration;
+string mySqlConnectionString = Ensure.ArgumentNotNull(configuration.GetConnectionString("MySql"));
+string redisConnectionString = Ensure.ArgumentNotNull(configuration.GetConnectionString("Redis"));
+builder.Logging.AddConsole().AddDebug();
+
 // Add services to the container.
-
-
 services.AddControllersWithViews();
-services.AddDbContext<BrewTrackDbContext>(options => options.UseMySQL(configuration.GetConnectionString("MySql")));
+services.AddDbContext<BrewTrackDbContext>(options => options.UseMySQL(mySqlConnectionString));
+
+//Configure other services up here
+
+// Add Redis to service container
+services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>(options =>
+{
+    // using StackExchange.Redis;
+    return ConnectionMultiplexer.Connect(redisConnectionString);    
+});
 services.AddBrewTrackService(configuration);
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
-var app = builder.Build();
+
+/* BUILD APP */ var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -26,6 +42,7 @@ if (!app.Environment.IsDevelopment())
 
 if(app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
@@ -45,4 +62,6 @@ app.MapControllerRoute(
 
 app.MapFallbackToFile("index.html");
 
-app.Run();
+app
+    /* MIGRATE APP */ .MigrateDatabase()
+    /* RUN APP */ .Run();
