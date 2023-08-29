@@ -2,30 +2,30 @@
 version: '3.1'
 
 services:
-    mysql:
-        image: docker.io/bitnami/mysql:8.0
-        ports:
-          - '3306:3306'
-        volumes:
-          - 'mysql_data:/bitnami/mysql/data'
-        environment:
-          # ALLOW_EMPTY_PASSWORD is recommended only for development
-          - ALLOW_EMPTY_PASSWORD=yes
-        healthcheck:
-              test: ['CMD', '/opt/bitnami/scripts/mysql/healthcheck.sh']
-              interval: 15s
-              timeout: 5s
-              retries: 6
+  mysql:
+    image: docker.io/bitnami/mysql:8.0
+    ports:
+      - '127.0.0.1:3306:3306'
+    volumes:
+      - 'mysql_data:/bitnami/mysql/data'
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development
+      - ALLOW_EMPTY_PASSWORD=yes
+    healthcheck:
+      test: [ 'CMD', '/opt/bitnami/scripts/mysql/healthcheck.sh' ]
+      interval: 15s
+      timeout: 5s
+      retries: 6
 
-    redis-bt:
-        image: redis:7.0-alpine
-        ports: 
-          - 6379:6379
-        volumes:
-          - my_redis_data:/data
+  redis-bt:
+    image: redis:7.0-alpine
+    ports:
+      - 127.0.0.1:6379:6379
+    volumes:
+      - my_redis_data:/data
 
 volumes:
   mysql_data:
     driver: local
   my_redis_data:
-   driver: local  
+    driver: local

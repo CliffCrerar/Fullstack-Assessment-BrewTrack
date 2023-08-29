@@ -6,11 +6,13 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+RUN apt-get update -yq && apt-get upgrade -yq && apt-get install -yq curl git nano
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && apt-get install -yq nodejs build-essential
 WORKDIR /src
 COPY ["BrewTrack.csproj", "."]
 RUN dotnet restore "./BrewTrack.csproj"
 COPY . .
-WORKDIR "/src/."
+RUN mv merged-appsettings.json appsettings.json
 RUN dotnet build "BrewTrack.csproj" -c Release -o /app/build
 
 FROM build AS publish
