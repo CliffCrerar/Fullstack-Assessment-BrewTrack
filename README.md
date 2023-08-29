@@ -2,6 +2,8 @@
 
 ## Introduction
 
+![BrewTrack App Teaser image](./assets/brewtrack-app-screen-shot.png)
+
 This is a mock assesment project that provides a single source of information about brew pubs for customers.
 
 ## Stack
